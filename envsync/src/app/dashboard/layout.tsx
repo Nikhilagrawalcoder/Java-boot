@@ -20,6 +20,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <span className="hidden text-sm text-muted-foreground sm:inline">
               {session.user.email ?? session.user.name}
             </span>
+            <Link href="/dashboard/settings" className="text-sm text-muted-foreground hover:text-foreground">
+              Settings
+            </Link>
             <ThemeToggle />
             <form
               action={async () => {

@@ -1,0 +1,22 @@
+{
+  "name": "envsync",
+  "version": "0.1.0",
+  "description": "EnvSync CLI — configuration health checks for local development and CI.",
+  "license": "MIT",
+  "bin": {
+    "envsync": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js --banner:js=\"#!/usr/bin/env node\"",
+    "prepublishOnly": "npm run build",
+    "dev": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

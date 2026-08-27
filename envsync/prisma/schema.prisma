@@ -63,6 +63,7 @@ model User {
   sessions    Session[]
   memberships Membership[]
   scans       Scan[]
+  githubInstallations GitHubInstallation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,14 +114,23 @@ model Membership {
 
 model GitHubInstallation {
   id                   String  @id @default(cuid())
-  githubInstallationId String  @unique
+  githubInstallationId String  @unique // GitHub user id who authorized the connection
   accountLogin         String
   accountType          String? // "User" | "Organization"
 
-  organizationId String
+  // OAuth access token, encrypted at rest (src/lib/crypto.ts). Only ever
+  // decrypted server-side to call the GitHub API on the user's behalf.
+  accessTokenEncrypted String @db.Text
+  scope                String
+
+  connectedById String?
+  connectedBy   User?   @relation(fields: [connectedById], references: [id], onDelete: SetNull)
+
+  organizationId String       @unique
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ---------- Repository + scanning ----------
@@ -166,6 +176,7 @@ model Environment {
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
   variableStates EnvironmentVariableState[]
+  issues         Issue[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -288,6 +299,10 @@ model Issue {
 
   environmentVariableId String?
   environmentVariable   EnvironmentVariable? @relation(fields: [environmentVariableId], references: [id], onDelete: SetNull)
+
+  // Set for MISSING_VARIABLE issues: which environment the variable is missing from.
+  environmentId String?
+  environment   Environment? @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
