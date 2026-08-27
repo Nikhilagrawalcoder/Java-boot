@@ -1,0 +1,311 @@
+// EnvSync data model.
+// Note: no model here ever stores an actual secret value — only metadata
+// (key names, file/line usage, booleans, hashes/fingerprints, masked previews).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth.js (NextAuth) models ----------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Core identity ----------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // set only for email/password sign-up; null for OAuth-only users
+
+  accounts    Account[]
+  sessions    Session[]
+  memberships Membership[]
+  scans       Scan[]
+  githubInstallations GitHubInstallation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+model Organization {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+  plan Plan   @default(FREE)
+
+  memberships         Membership[]
+  repositories        Repository[]
+  githubInstallations GitHubInstallation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Membership {
+  id   String @id @default(cuid())
+  role Role   @default(MEMBER)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, organizationId])
+}
+
+// ---------- GitHub connection ----------
+
+model GitHubInstallation {
+  id                   String  @id @default(cuid())
+  githubInstallationId String  @unique // GitHub user id who authorized the connection
+  accountLogin         String
+  accountType          String? // "User" | "Organization"
+
+  // OAuth access token, encrypted at rest (src/lib/crypto.ts). Only ever
+  // decrypted server-side to call the GitHub API on the user's behalf.
+  accessTokenEncrypted String @db.Text
+  scope                String
+
+  connectedById String?
+  connectedBy   User?   @relation(fields: [connectedById], references: [id], onDelete: SetNull)
+
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Repository + scanning ----------
+
+model Repository {
+  id            String  @id @default(cuid())
+  githubRepoId  String  @unique
+  name          String
+  fullName      String // e.g. "acme/acme-saas"
+  defaultBranch String  @default("main")
+  isPrivate     Boolean @default(true)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  lastScanAt DateTime?
+
+  environments         Environment[]
+  environmentVariables EnvironmentVariable[]
+  scans                Scan[]
+  issues               Issue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+enum EnvironmentKind {
+  LOCAL
+  DEVELOPMENT
+  STAGING
+  PRODUCTION
+}
+
+model Environment {
+  id         String          @id @default(cuid())
+  name       String // display label, e.g. "Staging"
+  kind       EnvironmentKind
+  sourceFile String? // e.g. ".env.staging", or null for manually-configured production
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  variableStates EnvironmentVariableState[]
+  issues         Issue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([repositoryId, kind])
+}
+
+model EnvironmentVariable {
+  id            String  @id @default(cuid())
+  key           String
+  isPublic      Boolean @default(false) // NEXT_PUBLIC_ or VITE_ prefixed
+  detectedType  String? // e.g. "database", "stripe", "redis", "storage", "url", "auth"
+  inExampleFile Boolean @default(false)
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  usages VariableUsage[]
+  states EnvironmentVariableState[]
+  issues Issue[]
+
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @updatedAt
+
+  @@unique([repositoryId, key])
+}
+
+model VariableUsage {
+  id       String @id @default(cuid())
+  filePath String
+  lineNumber Int
+
+  environmentVariableId String
+  environmentVariable   EnvironmentVariable @relation(fields: [environmentVariableId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([environmentVariableId])
+}
+
+model EnvironmentVariableState {
+  id           String  @id @default(cuid())
+  isConfigured Boolean
+
+  environmentId String
+  environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  environmentVariableId String
+  environmentVariable   EnvironmentVariable @relation(fields: [environmentVariableId], references: [id], onDelete: Cascade)
+
+  @@unique([environmentId, environmentVariableId])
+}
+
+enum ScanStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model Scan {
+  id     String     @id @default(cuid())
+  status ScanStatus @default(PENDING)
+
+  healthScore Int?
+  summary     Json? // { critical, warning, healthy }
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  triggeredById String?
+  triggeredBy   User?   @relation(fields: [triggeredById], references: [id], onDelete: SetNull)
+
+  issues Issue[]
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([repositoryId])
+}
+
+enum IssueType {
+  MISSING_VARIABLE
+  MISSING_FROM_EXAMPLE
+  UNDOCUMENTED_IN_EXAMPLE
+  SECRET_EXPOSURE
+  UNUSED_VARIABLE
+  ENV_INCONSISTENCY
+}
+
+enum IssueSeverity {
+  CRITICAL
+  WARNING
+  INFO
+}
+
+enum IssueStatus {
+  OPEN
+  RESOLVED
+  IGNORED
+}
+
+model Issue {
+  id          String        @id @default(cuid())
+  type        IssueType
+  severity    IssueSeverity
+  status      IssueStatus   @default(OPEN)
+  title       String
+  description String
+
+  filePath   String?
+  lineNumber Int?
+  metadata   Json? // e.g. masked secret preview, environment name, recommended action
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  scanId String?
+  scan   Scan?   @relation(fields: [scanId], references: [id], onDelete: SetNull)
+
+  environmentVariableId String?
+  environmentVariable   EnvironmentVariable? @relation(fields: [environmentVariableId], references: [id], onDelete: SetNull)
+
+  // Set for MISSING_VARIABLE issues: which environment the variable is missing from.
+  environmentId String?
+  environment   Environment? @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([repositoryId])
+}

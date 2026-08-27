@@ -1,0 +1,47 @@
+"use client";
+
+import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { askCopilotAction, type CopilotState } from "./actions";
+
+const initialState: CopilotState = { question: "", answer: null };
+
+const SUGGESTIONS = ["Why is staging failing?", "What changed?", "Any secrets exposed?"];
+
+export function CopilotChat({ repositoryId }: { repositoryId: string }) {
+  const [state, formAction, pending] = useActionState(
+    askCopilotAction.bind(null, repositoryId),
+    initialState
+  );
+
+  return (
+    <div className="space-y-4">
+      <form action={formAction} className="flex gap-2">
+        <input
+          name="question"
+          required
+          placeholder="Why is staging failing?"
+          className="flex-1 rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+        />
+        <Button type="submit" disabled={pending}>
+          {pending ? "Thinking…" : "Ask"}
+        </Button>
+      </form>
+
+      <div className="flex flex-wrap gap-2">
+        {SUGGESTIONS.map((s) => (
+          <span key={s} className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
+            {s}
+          </span>
+        ))}
+      </div>
+
+      {state.answer && (
+        <div className="space-y-1 rounded-md border border-border bg-muted/40 p-4 text-sm">
+          <p className="text-xs text-muted-foreground">You asked: "{state.question}"</p>
+          <p className="whitespace-pre-line">{state.answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}

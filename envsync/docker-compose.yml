@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: envsync
+      POSTGRES_PASSWORD: envsync
+      POSTGRES_DB: envsync
+    ports:
+      - "5432:5432"
+    volumes:
+      - envsync_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  envsync_postgres_data:
