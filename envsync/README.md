@@ -59,6 +59,10 @@ demo@envsync.dev / envsync-demo
 
 ## Getting started
 
+**New here? Follow [`SETUP.md`](SETUP.md)** — a step-by-step guide from
+zero to a running app with demo data, then GitHub sign-in, PR checks, and
+deployment. The quick version:
+
 ```bash
 cp .env.example .env
 # fill in DATABASE_URL, NEXTAUTH_SECRET, ENCRYPTION_KEY, and (optionally)
