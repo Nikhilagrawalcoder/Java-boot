@@ -43,7 +43,7 @@ export function DashboardShell({
   const activeRepositoryId = repositories.find((r) => pathname?.startsWith(`/dashboard/${r.id}`))?.id;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background lg:flex-row">
       <aside className="hidden w-64 shrink-0 border-r border-border lg:flex">
         <SidebarContent
           repositories={repositories}

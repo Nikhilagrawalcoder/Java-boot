@@ -1,5 +1,6 @@
 import { USAGE_PATTERNS, isPublicVariable, shouldScanPath } from "./patterns";
 import { classifyVariable } from "./classify";
+import { findProvider } from "./providers";
 import type { DetectedVariable, SourceFile } from "./types";
 
 function lineNumberAt(content: string, index: number): number {
@@ -45,6 +46,7 @@ export function scanSourceFiles(files: SourceFile[]): DetectedVariable[] {
             key,
             isPublic: isPublicVariable(key),
             category: classifyVariable(key),
+            provider: findProvider(key)?.name,
             usages: [{ filePath: file.path, lineNumber }],
           });
         }

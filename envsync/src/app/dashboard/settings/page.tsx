@@ -143,9 +143,15 @@ export default async function SettingsPage() {
             <p className="text-sm text-muted-foreground">No repositories connected yet.</p>
           )}
           {org.repositories.map((repo) => (
-            <div key={repo.id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-              <div>
-                <Link href={`/dashboard/${repo.id}`} className="text-sm font-medium underline-offset-4 hover:underline">
+            <div
+              key={repo.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
+            >
+              <div className="min-w-0">
+                <Link
+                  href={`/dashboard/${repo.id}`}
+                  className="break-all text-sm font-medium underline-offset-4 hover:underline"
+                >
                   {repo.fullName}
                 </Link>
               </div>

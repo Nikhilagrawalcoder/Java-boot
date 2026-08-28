@@ -17,7 +17,7 @@ export function RepoTabs({ repositoryId }: { repositoryId: string }) {
   ];
 
   return (
-    <nav className="flex gap-1 border-b border-border text-sm">
+    <nav className="-mx-6 flex gap-1 overflow-x-auto border-b border-border px-6 text-sm sm:mx-0 sm:px-0">
       {tabs.map((tab) => {
         const active = tab.href === base ? pathname === base : pathname?.startsWith(tab.href);
         return (
@@ -25,7 +25,7 @@ export function RepoTabs({ repositoryId }: { repositoryId: string }) {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "border-b-2 px-3 py-2 transition-colors",
+              "shrink-0 whitespace-nowrap border-b-2 px-3 py-2 transition-colors",
               active
                 ? "border-primary font-medium text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"

@@ -10,13 +10,26 @@ export interface VariableUsageLocation {
 
 export type VariableCategory =
   | "database"
-  | "supabase"
-  | "stripe"
-  | "redis"
+  | "cache"
   | "storage"
   | "auth"
   | "email"
+  | "sms"
   | "ai"
+  | "payments"
+  | "analytics"
+  | "monitoring"
+  | "ci"
+  | "crm"
+  | "search"
+  | "feature-flags"
+  | "maps"
+  | "video"
+  | "cms"
+  | "security"
+  | "blockchain"
+  | "social"
+  | "hosting"
   | "url"
   | "other";
 
@@ -24,6 +37,8 @@ export interface DetectedVariable {
   key: string;
   isPublic: boolean;
   category: VariableCategory;
+  /** Best-guess vendor name (e.g. "Stripe", "Twilio"), when recognized. */
+  provider?: string;
   usages: VariableUsageLocation[];
 }
 
