@@ -1,15 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HealthGauge } from "@/components/health-gauge";
 import { EnvironmentCard } from "@/components/environment-card";
 import { FindingItem } from "@/components/finding-item";
 import { demoRepository } from "@/lib/demo-data";
+import { WindowChrome } from "./window-chrome";
 
 export function DashboardPreview() {
   const demo = demoRepository;
 
   return (
-    <Card className="w-full max-w-2xl overflow-hidden text-left shadow-xl">
+    <WindowChrome url={`envsync.dev/dashboard/${demo.name}`} className="w-full max-w-2xl text-left">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
         <div className="flex items-center gap-2 text-sm">
           <span className="font-medium">{demo.name}</span>
@@ -46,6 +47,6 @@ export function DashboardPreview() {
           </FindingItem>
         ))}
       </CardContent>
-    </Card>
+    </WindowChrome>
   );
 }

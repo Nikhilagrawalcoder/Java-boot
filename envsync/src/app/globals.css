@@ -49,3 +49,9 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
+
+.bg-grid {
+  background-image: linear-gradient(to right, hsl(var(--border) / 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--border) / 0.6) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
