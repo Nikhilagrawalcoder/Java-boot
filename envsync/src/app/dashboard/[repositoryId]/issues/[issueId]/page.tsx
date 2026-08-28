@@ -3,7 +3,7 @@ import { Check, X } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CATEGORY_LABELS } from "@/lib/scan/classify";
+import { CATEGORY_LABELS, findProvider } from "@/lib/scan/classify";
 import type { VariableCategory } from "@/lib/scan/types";
 import { getFixInstructions } from "@/lib/scan/fix-instructions";
 
@@ -79,7 +79,11 @@ export default async function IssueDetailPage({
           {variable && (
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Required by</p>
-              <p className="text-sm">{CATEGORY_LABELS[variable.detectedType as VariableCategory] ?? "Application configuration"}</p>
+              <p className="text-sm">
+                {findProvider(variable.key)?.name ??
+                  CATEGORY_LABELS[variable.detectedType as VariableCategory] ??
+                  "Application configuration"}
+              </p>
             </div>
           )}
         </CardContent>

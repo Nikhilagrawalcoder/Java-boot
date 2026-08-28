@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { DestructiveActionButton } from "@/components/dashboard/destructive-action-button";
 import { MemberRow } from "@/components/dashboard/member-row";
 import { InviteMemberForm } from "@/components/dashboard/invite-member-form";
+import { ApiKeysCard } from "@/components/dashboard/api-keys-card";
 import { disconnectGitHubAction, deleteRepositoryAction } from "./actions";
 
 export default async function SettingsPage() {
@@ -98,14 +99,9 @@ export default async function SettingsPage() {
             EnvSync reads repository contents only, to scan for environment-variable usage and
             <code className="mx-1 rounded bg-muted px-1 py-0.5">.env.example</code>. It never
             requests write access and never reads or stores your secret values. See{" "}
-            <a
-              href="https://github.com/Nikhilagrawalcoder/Java-boot/blob/main/envsync/docs/github-permissions.md"
-              className="underline underline-offset-4"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <Link href="/docs/github-permissions" className="underline underline-offset-4">
               the full breakdown
-            </a>
+            </Link>
             .
           </p>
           {installation ? (
@@ -136,6 +132,25 @@ export default async function SettingsPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle>API keys</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ApiKeysCard
+            canManage={canRemoveMembers}
+            keys={org.apiKeys.map((key) => ({
+              id: key.id,
+              name: key.name,
+              keyPrefix: key.keyPrefix,
+              createdAt: key.createdAt.toISOString(),
+              lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
+              revokedAt: key.revokedAt?.toISOString() ?? null,
+            }))}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Repositories</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -143,9 +158,15 @@ export default async function SettingsPage() {
             <p className="text-sm text-muted-foreground">No repositories connected yet.</p>
           )}
           {org.repositories.map((repo) => (
-            <div key={repo.id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-              <div>
-                <Link href={`/dashboard/${repo.id}`} className="text-sm font-medium underline-offset-4 hover:underline">
+            <div
+              key={repo.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
+            >
+              <div className="min-w-0">
+                <Link
+                  href={`/dashboard/${repo.id}`}
+                  className="break-all text-sm font-medium underline-offset-4 hover:underline"
+                >
                   {repo.fullName}
                 </Link>
               </div>

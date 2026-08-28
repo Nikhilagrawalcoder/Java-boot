@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { GitHubIcon } from "@/components/icons";
-import { GITHUB_DOCS_URL, GITHUB_REPO_URL } from "@/lib/constants";
+import { GITHUB_REPO_URL } from "@/lib/constants";
 
 const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string }> }> = [
   {
@@ -16,8 +16,8 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
   {
     title: "Resources",
     links: [
-      { label: "Documentation", href: GITHUB_DOCS_URL },
-      { label: "GitHub permissions", href: `${GITHUB_DOCS_URL.replace("#readme", "")}/docs/github-permissions.md` },
+      { label: "Documentation", href: "/docs" },
+      { label: "GitHub permissions", href: "/docs/github-permissions" },
       { label: "Source code", href: GITHUB_REPO_URL },
     ],
   },

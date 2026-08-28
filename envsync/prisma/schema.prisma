@@ -64,6 +64,7 @@ model User {
   memberships Membership[]
   scans       Scan[]
   githubInstallations GitHubInstallation[]
+  createdApiKeys ApiKey[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -90,9 +91,37 @@ model Organization {
   memberships         Membership[]
   repositories        Repository[]
   githubInstallations GitHubInstallation[]
+  apiKeys             ApiKey[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ---------- Public API access ----------
+
+model ApiKey {
+  id String @id @default(cuid())
+
+  name String // user-chosen label, e.g. "CI pipeline"
+
+  // Only the prefix is ever displayed again after creation, so a revoked or
+  // lost key can still be identified in the list. The full key is never
+  // stored — only its one-way hash, checked against on every API request.
+  keyPrefix String
+  keyHash   String @unique
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId])
 }
 
 model Membership {
