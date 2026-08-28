@@ -73,6 +73,21 @@ export default function DocsConceptsPage() {
         </p>
       </section>
 
+      <section className="space-y-3" id="live-deploy-sync">
+        <h2 className="text-xl font-semibold tracking-tight">Live deploy sync (Vercel)</h2>
+        <p className="text-muted-foreground">
+          Manually toggling &quot;is this configured?&quot; per environment works, but it drifts — someone adds a
+          variable on Vercel and forgets to reflect it here. Connect a Vercel project from the{" "}
+          <strong className="text-foreground">Environments</strong> tab with an API token and project ID,
+          and EnvSync reads the actual variable <em>names</em> configured for Production, Preview, and
+          Development directly from Vercel&apos;s API — never the values, even though Vercel&apos;s API can
+          return them for non-sensitive variables. Those three environments switch from manual checkboxes
+          to read-only, ground-truth status, and re-sync automatically on every scan. This is the one
+          piece of the picture a git-based tool like GitHub&apos;s secret scanning cannot see at all: it has
+          no access to your deploy platform, only to what&apos;s committed.
+        </p>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-xl font-semibold tracking-tight">Secret exposure detection</h2>
         <p className="text-muted-foreground">

@@ -7,6 +7,7 @@ import { detectSecrets, shouldScanForSecrets } from "./secrets";
 import { parseEnvExample, diffAgainstExample } from "./example-diff";
 import { computeHealthScore, type ScorableIssue } from "./scoring";
 import { syncEnvironmentIssues } from "./environment-sync";
+import { syncFromVercel } from "./vercel-sync";
 import type { SourceFile } from "./types";
 
 const MAX_FILES_TO_FETCH = 400;
@@ -210,6 +211,12 @@ export async function runScan(repositoryId: string, triggeredById?: string) {
     });
 
     await prisma.repository.update({ where: { id: repositoryId }, data: { lastScanAt: new Date() } });
+
+    // Pull live env-var presence from Vercel (if connected) before recomputing
+    // coverage, so Production/Staging reflect the actual deploy platform
+    // rather than whatever was last toggled by hand. No-ops if unconnected;
+    // never fails the scan itself if Vercel is unreachable.
+    await syncFromVercel(repositoryId).catch(() => {});
 
     // Refresh environment-coverage issues now that the variable set may have changed.
     await syncEnvironmentIssues(repositoryId);

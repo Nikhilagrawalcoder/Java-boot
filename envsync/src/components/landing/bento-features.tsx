@@ -5,6 +5,7 @@ import {
   GitCompareArrows,
   Gauge,
   Terminal,
+  Cloud,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,12 @@ const FEATURES: Feature[] = [
     icon: Gauge,
     title: "Health score",
     description: "One transparent 0–100 score, with a visible +/- breakdown of every factor.",
+  },
+  {
+    icon: Cloud,
+    title: "Live Vercel sync",
+    description:
+      "Connects to your Vercel project and reads what's actually configured in Production and Preview — not just what's committed to git, which is all a code-scanning tool can ever see.",
   },
   {
     icon: FileCheck2,

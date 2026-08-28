@@ -12,6 +12,25 @@ function Code({ children }: { children: React.ReactNode }) {
 export default function DocsFaqPage() {
   const faqs: Array<{ question: string; answer: React.ReactNode }> = [
     {
+      question: "Doesn't GitHub already do this for free?",
+      answer: (
+        <>
+          GitHub&apos;s secret scanning catches credentials committed to git, and does that well — keep it
+          on. It has no visibility into anything outside your repository: whether a variable is actually
+          set in your Staging environment on Vercel, whether <Code>.env.example</Code> is stale, or whether
+          your next deploy is about to crash because a required variable was never configured anywhere.
+          That&apos;s not a git problem, so GitHub structurally can&apos;t see it. EnvSync&apos;s{" "}
+          <a
+            href="/docs/concepts#live-deploy-sync"
+            className="font-medium text-foreground underline underline-offset-4"
+          >
+            live Vercel sync
+          </a>{" "}
+          reads what&apos;s actually deployed, not just what&apos;s committed.
+        </>
+      ),
+    },
+    {
       question: "Is EnvSync a secrets manager?",
       answer: (
         <>

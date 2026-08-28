@@ -181,11 +181,32 @@ model Repository {
   environmentVariables EnvironmentVariable[]
   scans                Scan[]
   issues               Issue[]
+  vercelConnection     VercelConnection?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+}
+
+// ---------- Live deploy-platform sync ----------
+
+model VercelConnection {
+  id String @id @default(cuid())
+
+  // Personal/team API token, encrypted at rest (src/lib/crypto.ts). Used only
+  // to list environment variable *names* per target — EnvSync never reads or
+  // stores the decrypted values Vercel's API can return.
+  accessTokenEncrypted String @db.Text
+  vercelProjectId      String
+
+  repositoryId String     @unique
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  lastSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum EnvironmentKind {
