@@ -6,6 +6,7 @@ import { PLAN_LIMITS, PLAN_LABELS } from "@/lib/plan";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DestructiveActionButton } from "@/components/dashboard/destructive-action-button";
 import { disconnectGitHubAction, deleteRepositoryAction } from "./actions";
 
 export default async function SettingsPage() {
@@ -70,11 +71,15 @@ export default async function SettingsPage() {
                 </p>
                 <Badge variant="success">Active</Badge>
               </div>
-              <form action={disconnectGitHubAction}>
-                <Button type="submit" variant="destructive" size="sm">
-                  Disconnect GitHub
-                </Button>
-              </form>
+              <DestructiveActionButton
+                size="sm"
+                action={disconnectGitHubAction}
+                confirmMessage="Disconnect GitHub? You'll need to reauthorize to scan or connect repositories again."
+                loadingMessage="Disconnecting..."
+                successMessage="GitHub disconnected"
+              >
+                Disconnect GitHub
+              </DestructiveActionButton>
             </div>
           ) : (
             <Link href="/dashboard/connect">
@@ -99,11 +104,15 @@ export default async function SettingsPage() {
                   {repo.fullName}
                 </Link>
               </div>
-              <form action={deleteRepositoryAction.bind(null, repo.id)}>
-                <Button type="submit" variant="destructive" size="sm">
-                  Disconnect &amp; delete scan data
-                </Button>
-              </form>
+              <DestructiveActionButton
+                size="sm"
+                action={deleteRepositoryAction.bind(null, repo.id)}
+                confirmMessage={`Disconnect ${repo.fullName} and permanently delete all its scan data? This can't be undone.`}
+                loadingMessage="Deleting..."
+                successMessage="Repository disconnected"
+              >
+                Disconnect &amp; delete scan data
+              </DestructiveActionButton>
             </div>
           ))}
         </CardContent>

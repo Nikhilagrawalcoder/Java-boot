@@ -1,43 +1,26 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { auth, signOut } from "@/auth";
-import { Logo } from "@/components/logo";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
+import { auth } from "@/auth";
+import { getPrimaryMembership } from "@/lib/org";
+import { PLAN_LABELS } from "@/lib/plan";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { signOutAction } from "./sign-out-action";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
+  const membership = await getPrimaryMembership(session.user.id);
+  const repositories = membership?.organization.repositories ?? [];
+  const planLabel = membership ? PLAN_LABELS[membership.organization.plan] : "Free";
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/dashboard">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-muted-foreground sm:inline">
-              {session.user.email ?? session.user.name}
-            </span>
-            <Link href="/dashboard/settings" className="text-sm text-muted-foreground hover:text-foreground">
-              Settings
-            </Link>
-            <ThemeToggle />
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/" });
-              }}
-            >
-              <Button variant="outline" size="sm" type="submit">
-                Sign out
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
-    </div>
+    <DashboardShell
+      repositories={repositories.map((r) => ({ id: r.id, name: r.name }))}
+      userEmail={session.user.email ?? session.user.name ?? "Account"}
+      planLabel={planLabel}
+      signOutAction={signOutAction}
+    >
+      {children}
+    </DashboardShell>
   );
 }

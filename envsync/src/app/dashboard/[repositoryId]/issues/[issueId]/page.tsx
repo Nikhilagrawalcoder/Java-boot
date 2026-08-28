@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Check, X } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,7 +95,7 @@ export default async function IssueDetailPage({
               <div key={state.id} className="flex items-center justify-between text-sm">
                 <span>{state.environment.name}</span>
                 <span className={state.isConfigured ? "text-success" : "text-destructive"}>
-                  {state.isConfigured ? "✓" : "✗"}
+                  {state.isConfigured ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
                 </span>
               </div>
             ))}

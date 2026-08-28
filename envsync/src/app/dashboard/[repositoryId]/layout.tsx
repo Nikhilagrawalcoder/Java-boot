@@ -2,8 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPrimaryMembership } from "@/lib/org";
-import { Button } from "@/components/ui/button";
-import { rescanAction } from "./actions";
+import { RescanButton } from "@/components/dashboard/rescan-button";
 
 function timeAgo(date: Date | null): string {
   if (!date) return "never";
@@ -47,11 +46,7 @@ export default async function RepositoryLayout({
           <h1 className="text-lg font-semibold">{repository.fullName}</h1>
           <p className="text-xs text-muted-foreground">Last scan: {timeAgo(repository.lastScanAt)}</p>
         </div>
-        <form action={rescanAction.bind(null, repository.id)}>
-          <Button type="submit" variant="outline">
-            Rescan
-          </Button>
-        </form>
+        <RescanButton repositoryId={repository.id} />
       </div>
 
       <nav className="flex gap-1 border-b border-border text-sm">

@@ -1,3 +1,4 @@
+import { Check, X } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -132,7 +133,7 @@ export default async function EnvironmentsPage({
                                   : "border-destructive bg-destructive/10 text-destructive"
                               )}
                             >
-                              {configured ? "✓" : "✗"}
+                              {configured ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
                             </button>
                           </form>
                         </td>
