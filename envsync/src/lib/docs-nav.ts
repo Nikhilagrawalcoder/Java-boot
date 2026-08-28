@@ -25,7 +25,10 @@ export const DOCS_NAV: DocsNavSection[] = [
   },
   {
     title: "Reference",
-    items: [{ href: "/docs/faq", label: "FAQ" }],
+    items: [
+      { href: "/docs/api", label: "API & SDK" },
+      { href: "/docs/faq", label: "FAQ" },
+    ],
   },
 ];
 
