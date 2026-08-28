@@ -10,6 +10,7 @@ export async function getPrimaryMembership(userId: string) {
           repositories: true,
           githubInstallations: true,
           memberships: { include: { user: true }, orderBy: { createdAt: "asc" } },
+          apiKeys: { orderBy: { createdAt: "desc" } },
         },
       },
     },

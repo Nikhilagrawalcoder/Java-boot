@@ -18,3 +18,9 @@ export const MEMBER_LIMITS: Record<Plan, number> = {
   PRO: 1,
   TEAM: Infinity,
 };
+
+export const API_KEY_LIMITS: Record<Plan, number> = {
+  FREE: 1,
+  PRO: 3,
+  TEAM: Infinity,
+};
