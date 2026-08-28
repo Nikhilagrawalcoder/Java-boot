@@ -1,3 +1,5 @@
+# Local Postgres alternative to Supabase (the default — see SETUP.md §2)
+# for fully offline development with no external account.
 services:
   postgres:
     image: postgres:16-alpine

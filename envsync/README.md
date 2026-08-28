@@ -65,10 +65,11 @@ deployment. The quick version:
 
 ```bash
 cp .env.example .env
-# fill in DATABASE_URL, NEXTAUTH_SECRET, ENCRYPTION_KEY, and (optionally)
+# fill in DATABASE_URL + DIRECT_URL (defaults to a free Supabase project —
+# see SETUP.md §2; docker compose up -d works too if you'd rather stay
+# fully local), NEXTAUTH_SECRET, ENCRYPTION_KEY, and (optionally)
 # GITHUB_ID/GITHUB_SECRET/GITHUB_WEBHOOK_SECRET
 
-docker compose up -d          # local Postgres
 npm install
 npm run db:push               # create tables from prisma/schema.prisma
 npm run db:seed               # optional: load the Acme SaaS demo scenario
@@ -99,8 +100,8 @@ See [cli/README.md](cli/README.md).
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL ·
-Auth.js (NextAuth) v5
+Next.js (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL
+(Supabase by default) · Auth.js (NextAuth) v5
 
 ## Data model
 
