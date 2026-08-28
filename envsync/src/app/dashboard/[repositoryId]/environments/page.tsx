@@ -1,7 +1,8 @@
-import { Check, X } from "lucide-react";
+import { Check, Lock, X } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { VercelConnectionCard } from "@/components/dashboard/vercel-connection-card";
 import { cn } from "@/lib/utils";
 import {
   createEnvironmentAction,
@@ -18,13 +19,14 @@ export default async function EnvironmentsPage({
 }) {
   const { repositoryId } = await params;
 
-  const [environments, variables] = await Promise.all([
+  const [environments, variables, vercelConnection] = await Promise.all([
     prisma.environment.findMany({
       where: { repositoryId },
       include: { variableStates: true },
       orderBy: { createdAt: "asc" },
     }),
     prisma.environmentVariable.findMany({ where: { repositoryId }, orderBy: { key: "asc" } }),
+    prisma.vercelConnection.findUnique({ where: { repositoryId } }),
   ]);
 
   const stateFor = (environmentId: string, variableId: string) =>
@@ -32,8 +34,25 @@ export default async function EnvironmentsPage({
       .find((e) => e.id === environmentId)
       ?.variableStates.find((s) => s.environmentVariableId === variableId)?.isConfigured ?? false;
 
+  // Vercel sync owns Production/Staging/Development once connected — Local
+  // has no Vercel equivalent, so it stays manually toggled either way.
+  const autoSyncedKinds = vercelConnection ? new Set(["PRODUCTION", "STAGING", "DEVELOPMENT"]) : new Set();
+
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Deploy platform sync</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VercelConnectionCard
+            repositoryId={repositoryId}
+            connected={!!vercelConnection}
+            lastSyncedAt={vercelConnection?.lastSyncedAt?.toISOString() ?? null}
+          />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Add an environment</CardTitle>
@@ -93,15 +112,26 @@ export default async function EnvironmentsPage({
                   <th className="p-3">Variable</th>
                   {environments.map((env) => (
                     <th key={env.id} className="p-3 text-center">
-                      <div>{env.name}</div>
-                      <form action={deleteEnvironmentAction.bind(null, repositoryId, env.id)}>
-                        <button
-                          type="submit"
-                          className="text-[10px] font-normal normal-case text-muted-foreground underline"
-                        >
-                          remove
-                        </button>
-                      </form>
+                      <div className="inline-flex items-center gap-1">
+                        {env.name}
+                        {autoSyncedKinds.has(env.kind) && (
+                          <Lock className="h-3 w-3 text-muted-foreground" aria-label="Synced from Vercel" />
+                        )}
+                      </div>
+                      {autoSyncedKinds.has(env.kind) ? (
+                        <div className="text-[10px] font-normal normal-case text-muted-foreground">
+                          synced from Vercel
+                        </div>
+                      ) : (
+                        <form action={deleteEnvironmentAction.bind(null, repositoryId, env.id)}>
+                          <button
+                            type="submit"
+                            className="text-[10px] font-normal normal-case text-muted-foreground underline"
+                          >
+                            remove
+                          </button>
+                        </form>
+                      )}
                     </th>
                   ))}
                 </tr>
@@ -112,30 +142,37 @@ export default async function EnvironmentsPage({
                     <td className="p-3 font-mono text-xs">{variable.key}</td>
                     {environments.map((env) => {
                       const configured = stateFor(env.id, variable.id);
+                      const auto = autoSyncedKinds.has(env.kind);
+                      const badge = (
+                        <span
+                          aria-label={configured ? "Configured" : "Not configured"}
+                          className={cn(
+                            "inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs",
+                            configured
+                              ? "border-success bg-success/10 text-success"
+                              : "border-destructive bg-destructive/10 text-destructive"
+                          )}
+                        >
+                          {configured ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                        </span>
+                      );
                       return (
                         <td key={env.id} className="p-3 text-center">
-                          <form
-                            action={setVariableStateAction.bind(
-                              null,
-                              repositoryId,
-                              env.id,
-                              variable.id,
-                              !configured
-                            )}
-                          >
-                            <button
-                              type="submit"
-                              aria-label={configured ? "Configured" : "Not configured"}
-                              className={cn(
-                                "inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs",
-                                configured
-                                  ? "border-success bg-success/10 text-success"
-                                  : "border-destructive bg-destructive/10 text-destructive"
+                          {auto ? (
+                            badge
+                          ) : (
+                            <form
+                              action={setVariableStateAction.bind(
+                                null,
+                                repositoryId,
+                                env.id,
+                                variable.id,
+                                !configured
                               )}
                             >
-                              {configured ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
-                            </button>
-                          </form>
+                              <button type="submit">{badge}</button>
+                            </form>
+                          )}
                         </td>
                       );
                     })}

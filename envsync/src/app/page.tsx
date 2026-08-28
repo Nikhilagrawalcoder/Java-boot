@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { DashboardPreview } from "@/components/landing/dashboard-preview";
 import { StackRow } from "@/components/landing/stack-row";
 import { BentoFeatures } from "@/components/landing/bento-features";
+import { ComparisonSection } from "@/components/landing/comparison-section";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { CliShowcase } from "@/components/landing/cli-showcase";
 import { PricingSection } from "@/components/landing/pricing-section";
@@ -24,6 +25,7 @@ export default function LandingPage() {
 
         <StackRow />
         <BentoFeatures />
+        <ComparisonSection />
         <HowItWorks />
         <CliShowcase />
         <PricingSection />

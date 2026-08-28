@@ -11,9 +11,9 @@ time; after that, jump to whichever section you need.
 | Thing | Why | Where to get it |
 |---|---|---|
 | Node.js 18+ | Runs the app and the CLI | https://nodejs.org |
-| A Postgres database | Stores everything (see §11 for what) | Docker (included), or a hosted one — Neon, Supabase, Railway, Vercel Postgres all work |
+| A Supabase project (default) | Stores everything (see §11 for what) — free tier is plenty | https://supabase.com |
 | A GitHub account | To create the OAuth App (§4) | — |
-| (Optional) Docker | Easiest way to run Postgres locally | https://docker.com |
+| (Optional) Docker | Alternative to Supabase for a fully local Postgres, no external account | https://docker.com |
 
 You do **not** need the GitHub OAuth App to explore the product — §1–3 get
 you a fully working, fully populated dashboard with zero GitHub setup.
@@ -37,23 +37,37 @@ openssl rand -base64 32
 ```
 
 Paste one result into `NEXTAUTH_SECRET`, the other into `ENCRYPTION_KEY`.
-`DATABASE_URL` and `NEXTAUTH_URL` can stay as the defaults for local dev.
+`NEXTAUTH_URL` can stay as the default for local dev.
 
 ---
 
-## 2. Start Postgres and create the schema
+## 2. Set up the database and create the schema
 
-**Option A — Docker (simplest):**
+**Option A — Supabase (default, recommended):**
+
+1. Create a free project at https://supabase.com.
+2. Project Settings → Database → Connection string. Copy the
+   **Transaction** pooler string (port `6543`) into `DATABASE_URL` in
+   `.env`, appending `?pgbouncer=true` — this is the connection the running
+   app uses, safe for a serverless/edge runtime.
+3. Copy the **direct** connection string (port `5432`, no pooler) into
+   `DIRECT_URL` — Prisma needs this one specifically for `db push`/migrations,
+   since the pooler doesn't support the session features they rely on.
+
+**Option B — Docker (fully local, no external account):**
 
 ```bash
 docker compose up -d
 ```
 
-**Option B — a hosted Postgres you already have:** just paste its
-connection string into `DATABASE_URL` in `.env` instead, and skip the
-`docker compose` step.
+Then set both `DATABASE_URL` and `DIRECT_URL` in `.env` to
+`postgresql://envsync:envsync@localhost:5432/envsync` (no pooler locally,
+so they're the same value).
 
-Either way, then create the tables:
+**Option C — any other hosted Postgres you already have:** paste its
+connection string into both `DATABASE_URL` and `DIRECT_URL`.
+
+Whichever option, then create the tables:
 
 ```bash
 npm run db:push
@@ -197,8 +211,9 @@ Run through this once after setup — each line should be true:
    special config.
 3. Set every variable from `.env` as an environment variable on the
    platform, with production values:
-   - `DATABASE_URL` → your production Postgres (Neon/Supabase/Vercel
-     Postgres/etc.)
+   - `DATABASE_URL` / `DIRECT_URL` → your production Supabase project's
+     pooled and direct connection strings (see §2) — or any other Postgres,
+     using the same value for both if it has no pooler
    - `NEXTAUTH_URL` → your real domain, e.g. `https://envsync.yourdomain.com`
    - `NEXTAUTH_SECRET`, `ENCRYPTION_KEY` → generate fresh ones for
      production, don't reuse your local dev values
@@ -240,6 +255,9 @@ GitHub matches it literally, trailing slash and all.
 The stored token may have been revoked on GitHub's side — disconnect
 GitHub in Settings and reconnect.
 
-**`prisma db push` fails to connect.** Confirm Postgres is actually
-running (`docker compose ps` if you used Docker) and that `DATABASE_URL` in
-`.env` matches the credentials in `docker-compose.yml`.
+**`prisma db push` fails to connect.** If you're on Supabase, `db push`
+uses `DIRECT_URL`, not `DATABASE_URL` — double check you copied the
+*direct* connection string (port `5432`), not the pooler one, into
+`DIRECT_URL`. If you used Docker, confirm Postgres is actually running
+(`docker compose ps`) and that both URLs in `.env` match the credentials in
+`docker-compose.yml`.

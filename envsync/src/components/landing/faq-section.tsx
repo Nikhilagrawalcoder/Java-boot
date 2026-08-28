@@ -2,6 +2,11 @@ import { ChevronDown } from "lucide-react";
 
 const FAQS = [
   {
+    question: "Doesn't GitHub already do this for free?",
+    answer:
+      "GitHub's secret scanning catches credentials committed to git — and it's genuinely good at that, keep it on. It has no visibility into anything outside your repository, though: whether STRIPE_WEBHOOK_SECRET is actually set in your Staging environment on Vercel, whether .env.example is out of date, or whether a variable your code needs was ever configured anywhere. That's a deploy-platform problem, not a git problem, and it's what EnvSync exists for — including live sync from your Vercel project, not just what's committed to git.",
+  },
+  {
     question: "Is EnvSync a secrets manager?",
     answer:
       "No. EnvSync never stores actual secret values. It's a configuration intelligence layer: it detects which variables your code needs, compares them across environments, and flags what's missing, undocumented, or exposed. For storing and rotating secrets, keep using Vault, Doppler, 1Password, or your platform's native secrets manager alongside EnvSync.",
