@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPrimaryMembership } from "@/lib/org";
 import { RescanButton } from "@/components/dashboard/rescan-button";
+import { RepoTabs } from "@/components/dashboard/repo-tabs";
 
 function timeAgo(date: Date | null): string {
   if (!date) return "never";
@@ -31,13 +31,6 @@ export default async function RepositoryLayout({
   const repository = membership?.organization.repositories.find((r) => r.id === repositoryId);
   if (!repository) notFound();
 
-  const tabs = [
-    { href: `/dashboard/${repository.id}`, label: "Overview" },
-    { href: `/dashboard/${repository.id}/environments`, label: "Environments" },
-    { href: `/dashboard/${repository.id}/actions`, label: "CI setup" },
-    { href: `/dashboard/${repository.id}/copilot`, label: "Copilot" },
-  ];
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -49,17 +42,7 @@ export default async function RepositoryLayout({
         <RescanButton repositoryId={repository.id} />
       </div>
 
-      <nav className="flex gap-1 border-b border-border text-sm">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            className="px-3 py-2 text-muted-foreground hover:text-foreground"
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </nav>
+      <RepoTabs repositoryId={repository.id} />
 
       {children}
     </div>

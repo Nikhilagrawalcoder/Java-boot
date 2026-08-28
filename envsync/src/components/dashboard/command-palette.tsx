@@ -5,6 +5,7 @@ import { useTransition } from "react";
 import { Command } from "cmdk";
 import { toast } from "sonner";
 import {
+  AlertCircle,
   FolderGit2,
   Gauge,
   GitCompareArrows,
@@ -102,6 +103,13 @@ export function CommandPalette({
             >
               <Gauge className="h-4 w-4 text-muted-foreground" />
               Overview
+            </Command.Item>
+            <Command.Item
+              onSelect={() => go(`/dashboard/${activeRepositoryId}/issues`)}
+              className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm data-[selected=true]:bg-muted"
+            >
+              <AlertCircle className="h-4 w-4 text-muted-foreground" />
+              Issues
             </Command.Item>
             <Command.Item
               onSelect={() => go(`/dashboard/${activeRepositoryId}/environments`)}

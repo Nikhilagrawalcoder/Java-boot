@@ -11,3 +11,10 @@ export const PLAN_LABELS: Record<Plan, string> = {
   PRO: "Pro",
   TEAM: "Team",
 };
+
+// Free and Pro are single-seat per the pricing page ("Team members" is a Team-only line item).
+export const MEMBER_LIMITS: Record<Plan, number> = {
+  FREE: 1,
+  PRO: 1,
+  TEAM: Infinity,
+};

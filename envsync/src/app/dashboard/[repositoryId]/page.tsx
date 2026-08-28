@@ -6,6 +6,7 @@ import { HealthGauge } from "@/components/health-gauge";
 import { EnvironmentCard } from "@/components/environment-card";
 import { FindingItem } from "@/components/finding-item";
 import { ToastFromParam } from "@/components/toast-from-param";
+import { ScoreTrendChart } from "@/components/dashboard/score-trend-chart";
 
 function severityOf(issue: { severity: string }): "critical" | "warning" | "healthy" {
   return issue.severity === "CRITICAL" ? "critical" : "warning";
@@ -90,7 +91,24 @@ export default async function RepositoryOverviewPage({
 
       <Card className="lg:col-span-2">
         <CardHeader>
+          <CardTitle>Score history</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScoreTrendChart data={data.scoreHistory} />
+        </CardContent>
+      </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle>Recent findings</CardTitle>
+          {data.issues.length > 0 && (
+            <Link
+              href={`/dashboard/${data.repository.id}/issues`}
+              className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              View all
+            </Link>
+          )}
         </CardHeader>
         <CardContent className="space-y-2">
           {data.issues.length === 0 && (

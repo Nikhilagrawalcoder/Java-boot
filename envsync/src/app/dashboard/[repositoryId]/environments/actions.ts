@@ -1,19 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getPrimaryMembership } from "@/lib/org";
+import { requireRepositoryAccess } from "@/lib/auth-guard";
 import { syncEnvironmentIssues } from "@/lib/scan/environment-sync";
 import type { EnvironmentKind } from "@prisma/client";
-
-async function assertAccess(repositoryId: string) {
-  const session = await auth();
-  if (!session?.user) throw new Error("Not authenticated");
-  const membership = await getPrimaryMembership(session.user.id);
-  const owns = membership?.organization.repositories.some((r) => r.id === repositoryId);
-  if (!owns) throw new Error("Not authorized for this repository");
-}
 
 async function refresh(repositoryId: string) {
   await syncEnvironmentIssues(repositoryId);
@@ -22,7 +13,7 @@ async function refresh(repositoryId: string) {
 }
 
 export async function createEnvironmentAction(repositoryId: string, formData: FormData) {
-  await assertAccess(repositoryId);
+  await requireRepositoryAccess(repositoryId);
 
   const name = String(formData.get("name") ?? "").trim();
   const kind = String(formData.get("kind") ?? "LOCAL") as EnvironmentKind;
@@ -34,7 +25,7 @@ export async function createEnvironmentAction(repositoryId: string, formData: Fo
 }
 
 export async function deleteEnvironmentAction(repositoryId: string, environmentId: string) {
-  await assertAccess(repositoryId);
+  await requireRepositoryAccess(repositoryId);
   await prisma.environment.delete({ where: { id: environmentId } });
   await refresh(repositoryId);
 }
@@ -45,7 +36,7 @@ export async function setVariableStateAction(
   environmentVariableId: string,
   nextValue: boolean
 ) {
-  await assertAccess(repositoryId);
+  await requireRepositoryAccess(repositoryId);
 
   await prisma.environmentVariableState.upsert({
     where: { environmentId_environmentVariableId: { environmentId, environmentVariableId } },
