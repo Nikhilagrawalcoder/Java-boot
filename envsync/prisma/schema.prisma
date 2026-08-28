@@ -255,7 +255,8 @@ model Scan {
   startedAt   DateTime  @default(now())
   completedAt DateTime?
 
-  @@index([repositoryId])
+  // Serves the common "latest scan for this repo" lookup (order by startedAt desc, take 1).
+  @@index([repositoryId, startedAt])
 }
 
 enum IssueType {
@@ -307,5 +308,7 @@ model Issue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([repositoryId])
+  // Serves the hot "open issues for this repo" query used by the dashboard,
+  // environment-coverage sync, and the scan pipeline's resolve-then-recreate step.
+  @@index([repositoryId, status])
 }

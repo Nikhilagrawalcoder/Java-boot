@@ -4,10 +4,17 @@ import { auth } from "@/auth";
 import { getPrimaryMembership } from "@/lib/org";
 import { decryptSecret } from "@/lib/crypto";
 import { fetchUserRepositories } from "@/lib/github";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PLAN_LIMITS } from "@/lib/plan";
+import { ToastFromParam } from "@/components/toast-from-param";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  invalid: "That repository selection was missing required data. Please try again.",
+  plan_limit: "You've reached your plan's repository limit.",
+  default: "Something went wrong connecting that repository.",
+};
 
 export default async function SelectRepositoryPage() {
   const session = await auth();
@@ -33,6 +40,8 @@ export default async function SelectRepositoryPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-10">
+      <ToastFromParam param="error" messages={ERROR_MESSAGES} />
+
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Choose a repository</h1>
         <p className="text-sm text-muted-foreground">
@@ -76,9 +85,9 @@ export default async function SelectRepositoryPage() {
                     <input type="hidden" name="fullName" value={repo.fullName} />
                     <input type="hidden" name="defaultBranch" value={repo.defaultBranch} />
                     <input type="hidden" name="isPrivate" value={String(repo.isPrivate)} />
-                    <Button size="sm" disabled={atLimit}>
+                    <SubmitButton size="sm" disabled={atLimit} pendingText="Scanning...">
                       Scan this repository
-                    </Button>
+                    </SubmitButton>
                   </form>
                 )}
               </CardContent>

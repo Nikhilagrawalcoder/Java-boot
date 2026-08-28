@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
+import { ToastProvider } from "@/components/toast-provider";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={cn(inter.variable, jetbrainsMono.variable, "font-sans antialiased")}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>{children}</AuthProvider>
+          <ToastProvider />
         </ThemeProvider>
       </body>
     </html>

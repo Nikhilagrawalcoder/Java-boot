@@ -17,11 +17,25 @@ export async function getRepositoryDashboardData(repositoryId: string) {
   const activeVariables = repository.environmentVariables.filter((v) => v.usages.length > 0);
   const activeVariableIds = new Set(activeVariables.map((v) => v.id));
 
-  const openIssues = await prisma.issue.findMany({
-    where: { repositoryId, status: "OPEN" },
-    orderBy: { createdAt: "desc" },
-    include: { environmentVariable: { include: { usages: true } }, environment: true },
-  });
+  const [openIssues, scoreHistoryRaw] = await Promise.all([
+    prisma.issue.findMany({
+      where: { repositoryId, status: "OPEN" },
+      orderBy: { createdAt: "desc" },
+      include: { environmentVariable: { include: { usages: true } }, environment: true },
+    }),
+    prisma.scan.findMany({
+      where: { repositoryId, healthScore: { not: null } },
+      orderBy: { startedAt: "desc" },
+      take: 20,
+      select: { startedAt: true, healthScore: true },
+    }),
+  ]);
+
+  // Chart reads left-to-right chronologically; the query above needed "desc" to take the most recent 20.
+  const scoreHistory = scoreHistoryRaw
+    .slice()
+    .reverse()
+    .map((scan) => ({ date: scan.startedAt, score: scan.healthScore! }));
 
   const scorable: ScorableIssue[] = openIssues.map((issue) => ({
     type: issue.type,
@@ -51,6 +65,7 @@ export async function getRepositoryDashboardData(repositoryId: string) {
     healthy,
     environments,
     issues: openIssues,
+    scoreHistory,
   };
 }
 

@@ -164,6 +164,28 @@ async function main() {
     activeVariables.length * environments.length
   );
 
+  // A few historical scans (declining then recovering) so the score-history
+  // chart has something real to show on a fresh demo, not just one point.
+  const dayMs = 1000 * 60 * 60 * 24;
+  const history = [
+    { daysAgo: 6, healthScore: 91 },
+    { daysAgo: 4, healthScore: 78 },
+    { daysAgo: 2, healthScore: 58 },
+  ];
+  for (const entry of history) {
+    const startedAt = new Date(Date.now() - entry.daysAgo * dayMs);
+    await prisma.scan.create({
+      data: {
+        repositoryId: repository.id,
+        status: "COMPLETED",
+        healthScore: entry.healthScore,
+        summary: { critical: 0, warning: 0, healthy: 0 },
+        startedAt,
+        completedAt: new Date(startedAt.getTime() + 1000 * 30),
+      },
+    });
+  }
+
   await prisma.scan.create({
     data: {
       repositoryId: repository.id,

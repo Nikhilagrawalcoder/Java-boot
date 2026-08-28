@@ -9,6 +9,7 @@ export async function getPrimaryMembership(userId: string) {
         include: {
           repositories: true,
           githubInstallations: true,
+          memberships: { include: { user: true }, orderBy: { createdAt: "asc" } },
         },
       },
     },

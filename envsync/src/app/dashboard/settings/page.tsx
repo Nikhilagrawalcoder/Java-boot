@@ -2,10 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPrimaryMembership } from "@/lib/org";
-import { PLAN_LIMITS, PLAN_LABELS } from "@/lib/plan";
+import { PLAN_LIMITS, PLAN_LABELS, MEMBER_LIMITS } from "@/lib/plan";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DestructiveActionButton } from "@/components/dashboard/destructive-action-button";
+import { MemberRow } from "@/components/dashboard/member-row";
+import { InviteMemberForm } from "@/components/dashboard/invite-member-form";
 import { disconnectGitHubAction, deleteRepositoryAction } from "./actions";
 
 export default async function SettingsPage() {
@@ -18,6 +21,10 @@ export default async function SettingsPage() {
   const org = membership.organization;
   const installation = org.githubInstallations[0];
   const limit = PLAN_LIMITS[org.plan];
+  const memberLimit = MEMBER_LIMITS[org.plan];
+  const canRemoveMembers = membership.role === "OWNER" || membership.role === "ADMIN";
+  const canChangeRoles = membership.role === "OWNER";
+  const canInvite = canRemoveMembers && org.memberships.length < memberLimit;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -40,6 +47,45 @@ export default async function SettingsPage() {
           <Link href="/#pricing" className="text-sm underline underline-offset-4">
             View plans
           </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Team</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            {org.memberships.length}/{memberLimit === Infinity ? "∞" : memberLimit} seat
+            {memberLimit === 1 ? "" : "s"} used
+            {memberLimit !== Infinity && org.memberships.length >= memberLimit && (
+              <>
+                {" "}
+                — upgrade to{" "}
+                <Link href="/#pricing" className="underline underline-offset-4">
+                  Team
+                </Link>{" "}
+                for unlimited members.
+              </>
+            )}
+          </p>
+
+          <div className="space-y-2">
+            {org.memberships.map((m) => (
+              <MemberRow
+                key={m.id}
+                membershipId={m.id}
+                name={m.user.name ?? m.user.email ?? "Unknown"}
+                email={m.user.email ?? ""}
+                role={m.role}
+                isSelf={m.userId === session.user.id}
+                canRemove={canRemoveMembers}
+                canChangeRole={canChangeRoles}
+              />
+            ))}
+          </div>
+
+          {canInvite && <InviteMemberForm />}
         </CardContent>
       </Card>
 
@@ -70,11 +116,15 @@ export default async function SettingsPage() {
                 </p>
                 <Badge variant="success">Active</Badge>
               </div>
-              <form action={disconnectGitHubAction}>
-                <Button type="submit" variant="destructive" size="sm">
-                  Disconnect GitHub
-                </Button>
-              </form>
+              <DestructiveActionButton
+                size="sm"
+                action={disconnectGitHubAction}
+                confirmMessage="Disconnect GitHub? You'll need to reauthorize to scan or connect repositories again."
+                loadingMessage="Disconnecting..."
+                successMessage="GitHub disconnected"
+              >
+                Disconnect GitHub
+              </DestructiveActionButton>
             </div>
           ) : (
             <Link href="/dashboard/connect">
@@ -99,11 +149,15 @@ export default async function SettingsPage() {
                   {repo.fullName}
                 </Link>
               </div>
-              <form action={deleteRepositoryAction.bind(null, repo.id)}>
-                <Button type="submit" variant="destructive" size="sm">
-                  Disconnect &amp; delete scan data
-                </Button>
-              </form>
+              <DestructiveActionButton
+                size="sm"
+                action={deleteRepositoryAction.bind(null, repo.id)}
+                confirmMessage={`Disconnect ${repo.fullName} and permanently delete all its scan data? This can't be undone.`}
+                loadingMessage="Deleting..."
+                successMessage="Repository disconnected"
+              >
+                Disconnect &amp; delete scan data
+              </DestructiveActionButton>
             </div>
           ))}
         </CardContent>
