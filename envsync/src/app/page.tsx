@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { HeroSection } from "@/components/landing/hero-section";
 import { DashboardPreview } from "@/components/landing/dashboard-preview";
 import { StackRow } from "@/components/landing/stack-row";
-import { BentoFeatures } from "@/components/landing/bento-features";
+import { FeatureStory } from "@/components/landing/feature-story";
 import { ComparisonSection } from "@/components/landing/comparison-section";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { CliShowcase } from "@/components/landing/cli-showcase";
@@ -24,7 +24,7 @@ export default function LandingPage() {
         </section>
 
         <StackRow />
-        <BentoFeatures />
+        <FeatureStory />
         <ComparisonSection />
         <HowItWorks />
         <CliShowcase />
