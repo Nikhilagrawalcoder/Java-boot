@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import { HeroSection } from "@/components/landing/hero-section";
-import { DashboardPreview } from "@/components/landing/dashboard-preview";
+import { ProductDemoVideo } from "@/components/landing/product-demo-video";
 import { StackRow } from "@/components/landing/stack-row";
 import { FeatureStory } from "@/components/landing/feature-story";
 import { ComparisonSection } from "@/components/landing/comparison-section";
@@ -20,7 +20,7 @@ export default function LandingPage() {
         <HeroSection />
 
         <section id="preview" className="mx-auto flex max-w-5xl justify-center px-6 pb-24">
-          <DashboardPreview />
+          <ProductDemoVideo />
         </section>
 
         <StackRow />
