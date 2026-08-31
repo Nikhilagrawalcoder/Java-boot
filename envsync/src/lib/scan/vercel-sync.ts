@@ -38,7 +38,7 @@ export async function syncFromVercel(repositoryId: string): Promise<VercelSyncRe
   let envVars;
   try {
     const token = decryptSecret(connection.accessTokenEncrypted);
-    envVars = await fetchVercelProjectEnv(token, connection.vercelProjectId);
+    envVars = await fetchVercelProjectEnv(token, connection.vercelProjectId, connection.vercelTeamId);
   } catch (error) {
     return { synced: false, error: error instanceof Error ? error.message : "Vercel sync failed." };
   }

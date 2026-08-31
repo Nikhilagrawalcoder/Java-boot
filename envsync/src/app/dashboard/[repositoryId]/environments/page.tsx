@@ -3,12 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { VercelConnectionCard } from "@/components/dashboard/vercel-connection-card";
+import { ToastFromParam } from "@/components/toast-from-param";
 import { cn } from "@/lib/utils";
 import {
   createEnvironmentAction,
   deleteEnvironmentAction,
   setVariableStateAction,
 } from "./actions";
+import { hasPendingVercelConnection, listPendingVercelProjectsAction } from "./vercel-actions";
+
+const VERCEL_ERROR_MESSAGES: Record<string, string> = {
+  not_configured: "Vercel OAuth isn't configured on this deployment yet — set VERCEL_CLIENT_ID and VERCEL_CLIENT_SECRET.",
+  default: "Something went wrong connecting to Vercel.",
+};
 
 const KIND_OPTIONS = ["LOCAL", "DEVELOPMENT", "STAGING", "PRODUCTION"] as const;
 
@@ -19,7 +26,7 @@ export default async function EnvironmentsPage({
 }) {
   const { repositoryId } = await params;
 
-  const [environments, variables, vercelConnection] = await Promise.all([
+  const [environments, variables, vercelConnection, pending] = await Promise.all([
     prisma.environment.findMany({
       where: { repositoryId },
       include: { variableStates: true },
@@ -27,7 +34,10 @@ export default async function EnvironmentsPage({
     }),
     prisma.environmentVariable.findMany({ where: { repositoryId }, orderBy: { key: "asc" } }),
     prisma.vercelConnection.findUnique({ where: { repositoryId } }),
+    hasPendingVercelConnection(repositoryId),
   ]);
+
+  const pendingProjects = pending ? await listPendingVercelProjectsAction(repositoryId).catch(() => null) : null;
 
   const stateFor = (environmentId: string, variableId: string) =>
     environments
@@ -40,6 +50,8 @@ export default async function EnvironmentsPage({
 
   return (
     <div className="space-y-6">
+      <ToastFromParam param="vercelError" messages={VERCEL_ERROR_MESSAGES} />
+
       <Card>
         <CardHeader>
           <CardTitle>Deploy platform sync</CardTitle>
@@ -49,6 +61,8 @@ export default async function EnvironmentsPage({
             repositoryId={repositoryId}
             connected={!!vercelConnection}
             lastSyncedAt={vercelConnection?.lastSyncedAt?.toISOString() ?? null}
+            oauthConfigured={!!process.env.VERCEL_CLIENT_ID}
+            pendingProjects={pendingProjects}
           />
         </CardContent>
       </Card>

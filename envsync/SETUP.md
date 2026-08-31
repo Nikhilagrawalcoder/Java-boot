@@ -250,6 +250,39 @@ security posture.
 
 ---
 
+## 12. Turn on one-click "Connect with Vercel" (optional)
+
+Without this, the Environments tab's Vercel card still works — it just
+falls back to a manual "paste an API token + project ID" form. This section
+upgrades that to a real OAuth connect button with a project picker, no
+copy-pasting required.
+
+1. Go to https://vercel.com/integrations/console → **Create** → **OAuth2
+   Application** (not a full marketplace Integration — EnvSync only needs
+   to read env var names on projects the user picks, not the broader
+   Integrations resource model).
+2. Fill in:
+   - **Name**: `EnvSync (local)`
+   - **Redirect URL**: `http://localhost:3000/api/vercel/callback`
+3. Copy the **Client ID** into `.env` as `VERCEL_CLIENT_ID`.
+4. Copy the **Client Secret** into `.env` as `VERCEL_CLIENT_SECRET`.
+5. Restart `npm run dev`.
+
+Now the Environments tab shows a **Connect with Vercel** button: it sends
+the user to Vercel's consent screen, then back to a project picker (no
+manual token or project ID needed), then syncs immediately. Like the GitHub
+OAuth App in §4, register a **second** OAuth2 Application for your
+production domain's callback URL when you deploy (§10).
+
+> This flow can't be exercised end-to-end in an automated environment — it
+> requires a real Vercel account completing a real consent screen. It's
+> built to the exact shape of Vercel's documented OAuth2 flow
+> (`https://vercel.com/oauth/authorize` → `POST
+> https://api.vercel.com/v2/oauth/access_token`); if Vercel ever changes
+> those endpoints, `src/lib/vercel.ts` is the one place to update.
+
+---
+
 ## Troubleshooting
 
 **"UntrustedHost" error from Auth.js.** Make sure `NEXTAUTH_URL` in `.env`
@@ -262,6 +295,12 @@ GitHub matches it literally, trailing slash and all.
 **"Couldn't reach GitHub with the stored connection" on the repo picker.**
 The stored token may have been revoked on GitHub's side — disconnect
 GitHub in Settings and reconnect.
+
+**"Connect with Vercel" redirects back with an error.** Double-check the
+OAuth2 Application's Redirect URL is *exactly*
+`<your-url>/api/vercel/callback`. If the button doesn't appear at all,
+`VERCEL_CLIENT_ID`/`VERCEL_CLIENT_SECRET` aren't set — the manual token
+form still works as a fallback either way.
 
 **`prisma db push` fails to connect.** If you're on Supabase, `db push`
 uses `DIRECT_URL`, not `DATABASE_URL` — double check you copied the

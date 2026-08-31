@@ -204,8 +204,12 @@ model VercelConnection {
   // Personal/team API token, encrypted at rest (src/lib/crypto.ts). Used only
   // to list environment variable *names* per target — EnvSync never reads or
   // stores the decrypted values Vercel's API can return.
-  accessTokenEncrypted String @db.Text
+  accessTokenEncrypted String  @db.Text
   vercelProjectId      String
+  // Set when the token is scoped to a Vercel team (the common case) rather
+  // than a personal account — required on most Vercel API calls for team
+  // resources. Null for personal-account connections.
+  vercelTeamId         String?
 
   repositoryId String     @unique
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)

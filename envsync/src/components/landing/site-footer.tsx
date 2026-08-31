@@ -17,6 +17,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
     title: "Resources",
     links: [
       { label: "Documentation", href: "/docs" },
+      { label: "Blog", href: "/blog" },
       { label: "GitHub permissions", href: "/docs/github-permissions" },
       { label: "Changelog", href: "/changelog" },
       { label: "Source code", href: GITHUB_REPO_URL },
@@ -75,12 +76,18 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground sm:flex-row">
           <p>© {new Date().getFullYear()} EnvSync. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <Link href="/privacy" className="hover:text-foreground">
               Privacy
             </Link>
             <Link href="/terms" className="hover:text-foreground">
               Terms
+            </Link>
+            <Link href="/security" className="hover:text-foreground">
+              Security
+            </Link>
+            <Link href="/cookies" className="hover:text-foreground">
+              Cookies
             </Link>
             <p>Never stores your secret values.</p>
           </div>
