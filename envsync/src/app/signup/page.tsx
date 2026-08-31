@@ -39,7 +39,18 @@ export default function SignUpPage() {
       callbackUrl: "/dashboard",
     });
 
-    setLoading(false);
+    if (result?.error) {
+      // Account was created, but auto-login failed — send them to sign in
+      // manually instead of silently redirecting to a dead end.
+      setLoading(false);
+      toast.error("Account created — sign in to continue.");
+      window.location.href = "/signin";
+      return;
+    }
+
+    // Stay in the loading state through the full-page navigation below —
+    // clearing it here left the button looking idle for several seconds
+    // while the browser actually loaded the destination page.
     window.location.href = result?.url ?? "/dashboard";
   }
 

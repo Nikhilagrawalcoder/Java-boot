@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import type { Role } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { removeMemberAction, changeMemberRoleAction } from "@/app/dashboard/settings/team-actions";
+import { removeMemberAction, changeMemberRoleAction } from "@/app/dashboard/team/actions";
 
 export function MemberRow({
   membershipId,

@@ -37,7 +37,7 @@ export async function inviteMemberAction(email: string) {
     data: { userId: user.id, organizationId: membership.organizationId, role: "MEMBER" },
   });
 
-  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/team");
 }
 
 export async function removeMemberAction(membershipId: string) {
@@ -54,7 +54,7 @@ export async function removeMemberAction(membershipId: string) {
   if (target.userId === userId) throw new Error("You can't remove yourself. Ask another owner or admin.");
 
   await prisma.membership.delete({ where: { id: membershipId } });
-  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/team");
 }
 
 export async function changeMemberRoleAction(membershipId: string, role: Role) {
@@ -71,5 +71,5 @@ export async function changeMemberRoleAction(membershipId: string, role: Role) {
   if (role === "OWNER") throw new Error("Ownership transfer isn't supported yet.");
 
   await prisma.membership.update({ where: { id: membershipId }, data: { role } });
-  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/team");
 }

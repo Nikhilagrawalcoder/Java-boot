@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FolderGit2, Plus, Search, Settings } from "lucide-react";
+import { FolderGit2, Plus, Search, Settings, Users } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -86,6 +86,19 @@ export function SidebarContent({
           </span>
           <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
         </button>
+        <Link
+          href="/dashboard/team"
+          onClick={onNavigate}
+          className={cn(
+            "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors",
+            pathname === "/dashboard/team"
+              ? "bg-muted font-medium text-foreground"
+              : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          )}
+        >
+          <Users className="h-4 w-4" />
+          Team
+        </Link>
         <Link
           href="/dashboard/settings"
           onClick={onNavigate}

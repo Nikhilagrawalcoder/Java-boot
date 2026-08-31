@@ -3,7 +3,7 @@
 import { useState, useTransition, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { inviteMemberAction } from "@/app/dashboard/settings/team-actions";
+import { inviteMemberAction } from "@/app/dashboard/team/actions";
 
 export function InviteMemberForm() {
   const [email, setEmail] = useState("");

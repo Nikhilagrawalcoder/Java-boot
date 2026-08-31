@@ -14,6 +14,7 @@ import {
   RefreshCw,
   Settings,
   Terminal,
+  Users,
 } from "lucide-react";
 import type { SidebarRepository } from "./sidebar-content";
 import { rescanAction } from "@/app/dashboard/[repositoryId]/actions";
@@ -154,6 +155,13 @@ export function CommandPalette({
           >
             <Plus className="h-4 w-4 text-muted-foreground" />
             Connect a repository
+          </Command.Item>
+          <Command.Item
+            onSelect={() => go("/dashboard/team")}
+            className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm data-[selected=true]:bg-muted"
+          >
+            <Users className="h-4 w-4 text-muted-foreground" />
+            Team
           </Command.Item>
           <Command.Item
             onSelect={() => go("/dashboard/settings")}

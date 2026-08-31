@@ -35,11 +35,14 @@ function SignInForm() {
       redirect: false,
       callbackUrl,
     });
-    setLoading(false);
     if (result?.error) {
+      setLoading(false);
       toast.error("Invalid email or password.");
       return;
     }
+    // Stay in the loading state through the full-page navigation below —
+    // clearing it here left the button looking idle for several seconds
+    // while the browser actually loaded the destination page.
     window.location.href = result?.url ?? callbackUrl;
   }
 
