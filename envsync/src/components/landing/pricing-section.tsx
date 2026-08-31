@@ -4,40 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    description: "For trying EnvSync on a single project.",
-    features: ["1 repository", "Basic scanning", "Configuration health", "Basic issues"],
-    cta: "Start for free",
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "$19",
-    period: "/month",
-    description: "For teams shipping to staging and production.",
-    features: ["5 repositories", "Continuous scanning", "PR checks", "CLI", "EnvSync Copilot"],
-    cta: "Start Pro",
-    highlighted: true,
-  },
-  {
-    name: "Team",
-    price: "$49",
-    period: "/month",
-    description: "For organizations with multiple engineers.",
-    features: [
-      "Unlimited repositories",
-      "Team members",
-      "Organization dashboard",
-      "Advanced CI checks",
-    ],
-    cta: "Start Team",
-    highlighted: false,
-  },
-];
+import { PRICING_PLANS } from "@/lib/pricing-plans";
 
 export function PricingSection() {
   return (
@@ -47,12 +14,17 @@ export function PricingSection() {
           Simple pricing, no surprises
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Start free. Upgrade when you have more repositories to watch.
+          Every plan gets the full product. Upgrade for more repositories, seats, and API keys —
+          see the{" "}
+          <Link href="/pricing" className="underline underline-offset-4">
+            full comparison
+          </Link>
+          .
         </p>
       </div>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-3">
-        {plans.map((plan) => (
+        {PRICING_PLANS.map((plan) => (
           <Card
             key={plan.name}
             className={cn(

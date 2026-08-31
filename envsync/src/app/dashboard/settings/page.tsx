@@ -40,7 +40,7 @@ export default async function SettingsPage() {
               {limit === Infinity ? "∞" : limit} repositories used
             </p>
           </div>
-          <Link href="/#pricing" className="text-sm underline underline-offset-4">
+          <Link href="/pricing" className="text-sm underline underline-offset-4">
             View plans
           </Link>
         </CardContent>

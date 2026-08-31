@@ -48,7 +48,7 @@ export default function TermsPage() {
           <h2 className="text-xl font-semibold tracking-tight">4. Plans and billing</h2>
           <p className="text-muted-foreground">
             Free, Pro, and Team plans and their limits are described on the{" "}
-            <a href="/#pricing" className="underline underline-offset-4">
+            <a href="/pricing" className="underline underline-offset-4">
               pricing page
             </a>
             . Paid plans are billed in advance on a recurring basis; you can downgrade or cancel

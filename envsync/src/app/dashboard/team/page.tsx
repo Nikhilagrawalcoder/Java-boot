@@ -38,7 +38,7 @@ export default async function TeamPage() {
           {memberLimit !== Infinity && org.memberships.length >= memberLimit && (
             <p className="text-xs text-muted-foreground">
               You&apos;re at your plan&apos;s seat limit — upgrade to{" "}
-              <Link href="/#pricing" className="underline underline-offset-4">
+              <Link href="/pricing" className="underline underline-offset-4">
                 Team
               </Link>{" "}
               for unlimited members.
