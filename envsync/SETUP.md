@@ -206,6 +206,14 @@ Run through this once after setup — each line should be true:
 
 ## 10. Deploying (e.g. to Vercel)
 
+**Fast path:** click the Deploy button in the root [`README.md`](README.md) —
+it pre-fills the required env var names on import. You still have to set
+**Root Directory** to `envsync` in the new project's settings (this repo is
+a monorepo) and fill in real values for each variable below yourself, but
+it skips creating the Vercel project by hand.
+
+**Manual path:**
+
 1. Push this repo (or just the `envsync/` folder as its own repo) to GitHub.
 2. Import it in Vercel (or your platform of choice) — Next.js needs no
    special config.

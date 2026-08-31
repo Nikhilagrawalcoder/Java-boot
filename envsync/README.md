@@ -8,6 +8,14 @@ It is not a secrets manager — it never stores actual secret values. It
 detects which environment variables your app needs, where they exist, and
 what's missing or exposed.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FNikhilagrawalcoder%2FJava-boot&env=DATABASE_URL,DIRECT_URL,NEXTAUTH_SECRET,ENCRYPTION_KEY,GITHUB_ID,GITHUB_SECRET,GITHUB_WEBHOOK_SECRET&envDescription=Required%20to%20run%20EnvSync%20%E2%80%94%20see%20SETUP.md%20for%20how%20to%20get%20each%20value&envLink=https%3A%2F%2Fgithub.com%2FNikhilagrawalcoder%2FJava-boot%2Fblob%2Fmain%2Fenvsync%2FSETUP.md&project-name=envsync&repository-name=envsync)
+
+> **This repo is a monorepo** — after Vercel imports it, open the new
+> project's **Settings → General → Root Directory** and set it to `envsync`
+> before the first deploy. You'll still need a Supabase (or other Postgres)
+> database and a GitHub OAuth App — see [`SETUP.md`](SETUP.md) for both,
+> or skip GitHub for now and explore with the seeded demo account.
+
 ## What's built
 
 - **Landing page** — headline, feature overview, Free/Pro/Team pricing.
