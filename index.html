@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Primary Meta Tags -->
+<title>Envexa — Automated SaaS Environment Variable & Secret Scanner</title>
+<meta name="title" content="Envexa — Automated SaaS Environment Variable & Secret Scanner" />
+<meta name="description" content="Envexa scans your codebase, compares environment variables across local, staging, and production, and flags missing, exposed, or drifted secrets before deployment. Claim Free Early Access before the Diwali launch on November 8, 2026." />
+<meta name="keywords" content="environment variables, secret scanner, config drift, SaaS security, process.env audit, devops security, dotenv scanner, secrets leak detection, github action secret check" />
+<meta name="author" content="Envexa Team" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<link rel="canonical" href="https://envexa.dev/" />
+<meta name="theme-color" content="#0D2440" />
+
+<!-- Icons -->
+<link rel="icon" type="image/svg+xml" href="brand/logo-mark.svg" />
+<link rel="apple-touch-icon" href="brand/logo-mark.svg" />
+
+<!-- Performance Preconnect & Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Open Graph / Facebook / LinkedIn / Social -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://envexa.dev/" />
+<meta property="og:title" content="Envexa — Automated SaaS Environment Variable & Secret Scanner" />
+<meta property="og:description" content="Envexa scans your codebase, compares configuration across environments, and flags missing, exposed, or drifted secrets before deployment." />
+<meta property="og:image" content="https://envexa.dev/brand/logo-lockup.svg" />
+<meta property="og:site_name" content="Envexa" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="https://envexa.dev/" />
+<meta name="twitter:title" content="Envexa — Automated SaaS Environment Variable & Secret Scanner" />
+<meta name="twitter:description" content="Catch missing, exposed, or drifted environment variables before they break production." />
+<meta name="twitter:image" content="https://envexa.dev/brand/logo-lockup.svg" />
+<meta name="twitter:creator" content="@envexadev" />
+
+<!-- JSON-LD Structured Data for Google Rich Snippets -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://envexa.dev/#software",
+      "name": "Envexa",
+      "url": "https://envexa.dev/",
+      "operatingSystem": "Cross-platform (macOS, Linux, Windows, CI/CD)",
+      "applicationCategory": "DeveloperApplication",
+      "description": "Envexa scans your codebase, compares configuration across environments, and flags missing, exposed, or drifted variables before deployment.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/PreOrder",
+        "validFrom": "2026-11-08"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "240"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://envexa.dev/#organization",
+      "name": "Envexa",
+      "url": "https://envexa.dev/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://envexa.dev/brand/logo-mark.svg"
+      },
+      "sameAs": [
+        "https://twitter.com/envexadev",
+        "https://github.com/envexa"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://envexa.dev/#webpage",
+      "url": "https://envexa.dev/",
+      "name": "Envexa — Automated SaaS Environment Variable & Secret Scanner",
+      "description": "Envexa scans your codebase, compares configuration across environments, and flags what's missing, exposed, or drifted — before it ships.",
+      "isPartOf": {
+        "@id": "https://envexa.dev/#website"
+      },
+      "about": {
+        "@id": "https://envexa.dev/#software"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://envexa.dev/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Envexa completely free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Early access users get full access to all Envexa features completely free. No credit card or payment is required."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Envexa a secrets manager?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Envexa never stores actual secret values. It's a configuration intelligence layer: it detects which variables your code needs, compares them across environments, and flags what's missing, undocumented, or exposed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Doesn't GitHub already do this for free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "GitHub's secret scanning catches credentials committed to git. It has no visibility into whether a variable is actually set in your Staging environment, or whether .env.example is out of date. That's a deploy-platform problem, not a git problem, and it's what Envexa exists for."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to upload my production secrets?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Never. Production configuration is represented as metadata — which variables exist and whether they're set — not the values themselves. Local and staging work the same way."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens on Diwali (November 8)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You'll receive an email with your access link and setup instructions so you can start scanning your repositories right away."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* ---------- tokens ---------- */
+  :root {
+    --bg: #EEF2F6;
+    --bg-panel: #E3E9F0;
+    --bg-panel-2: #D9E1EA;
+    --text: #172C43;
+    --text-soft: #4C6178;
+    --text-faint: #7C8FA3;
+    --line: #172C43;
+    --line-a: rgba(23,44,67,0.18);
+    --line-a2: rgba(23,44,67,0.32);
+    --accent: #C4432B;
+    --accent-soft: rgba(196,67,43,0.12);
+    --good: #2C7A4B;
+    --good-soft: rgba(44,122,75,0.12);
+    --grid: rgba(23,44,67,0.06);
+    --shadow: rgba(23,44,67,0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D2440;
+      --bg-panel: #123057;
+      --bg-panel-2: #173964;
+      --text: #E4EFFA;
+      --text-soft: #A9C3DC;
+      --text-faint: #6F90AF;
+      --line: #E4EFFA;
+      --line-a: rgba(228,239,250,0.20);
+      --line-a2: rgba(228,239,250,0.36);
+      --accent: #FF7A50;
+      --accent-soft: rgba(255,122,80,0.16);
+      --good: #62CE93;
+      --good-soft: rgba(98,206,147,0.14);
+      --grid: rgba(228,239,250,0.07);
+      --shadow: rgba(0,0,0,0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0D2440;
+    --bg-panel: #123057;
+    --bg-panel-2: #173964;
+    --text: #E4EFFA;
+    --text-soft: #A9C3DC;
+    --text-faint: #6F90AF;
+    --line: #E4EFFA;
+    --line-a: rgba(228,239,250,0.20);
+    --line-a2: rgba(228,239,250,0.36);
+    --accent: #FF7A50;
+    --accent-soft: rgba(255,122,80,0.16);
+    --good: #62CE93;
+    --good-soft: rgba(98,206,147,0.14);
+    --grid: rgba(228,239,250,0.07);
+    --shadow: rgba(0,0,0,0.35);
+  }
+
+  /* ---------- reset-ish ---------- */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: local;
+  }
+  h1, h2, h3 { font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+  .rule { height: 1px; background: var(--line-a); border: 0; margin: 0; }
+
+  /* corner ticks, used sparingly on key frames */
+  .frame { position: relative; border: 1px solid var(--line-a2); background: var(--bg-panel); }
+  .frame::before, .frame::after,
+  .frame .tick-tl, .frame .tick-br { content: ""; }
+  .tick { position: absolute; width: 9px; height: 9px; pointer-events: none; }
+  .tick-tl { top: -1px; left: -1px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .tick-tr { top: -1px; right: -1px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .tick-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .tick-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+  /* ---------- header / title block ---------- */
+  header.titleblock {
+    border-bottom: 1px solid var(--line-a);
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    background-image: inherit;
+  }
+  .titleblock-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 16px 0;
+  }
+  .wordmark {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700; font-size: 1.05rem; letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .wordmark .dot { color: var(--accent); }
+  .logo-icon { flex: none; }
+  .logo-icon .ink { fill: var(--line); }
+  .logo-icon .flag { fill: var(--accent); }
+  nav.primary { display: flex; gap: 28px; align-items: center; }
+  nav.primary a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.8rem; text-decoration: none; color: var(--text-soft);
+    letter-spacing: 0.03em;
+  }
+  nav.primary a:hover { color: var(--text); }
+  .stamp {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    padding: 4px 9px; transform: rotate(-2deg);
+    white-space: nowrap;
+  }
+  @media (max-width: 720px) { nav.primary { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 56px 0 40px; }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start;
+  }
+  @media (max-width: 980px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .eyebrow-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .eyebrow-row .bracket { color: var(--accent); }
+
+  h1.headline {
+    font-size: clamp(2.1rem, 4.6vw, 3.35rem);
+    font-weight: 700; line-height: 1.08; letter-spacing: -0.01em;
+  }
+  h1.headline .accentline { color: var(--accent); }
+
+  p.lede {
+    margin-top: 22px; max-width: 46ch;
+    font-size: 1.08rem; color: var(--text-soft);
+  }
+
+  .diffbox {
+    margin-top: 26px; max-width: 480px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.82rem;
+    padding: 14px 16px;
+  }
+  .diffline { display: flex; gap: 10px; padding: 3px 0; white-space: pre-wrap; word-break: break-word; }
+  .diffline .gutter { width: 14px; flex: none; text-align: center; }
+  .diffline.rm { color: var(--accent); }
+  .diffline.rm .gutter { color: var(--accent); }
+  .diffline.rm .content { text-decoration: line-through; text-decoration-thickness: 1.5px; opacity: 0.85; }
+  .diffline.ok { color: var(--good); }
+  .diffline.ok .gutter { color: var(--good); }
+  .diffmeta { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line-a); color: var(--text-faint); font-size: 0.72rem; }
+
+  /* ---------- inspection diagram ---------- */
+  .inspection { padding: 20px 18px 22px; }
+  .inspection-title { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+  .inspection-title .name { font-size: 0.78rem; font-weight: 600; }
+  .envstack { display: flex; flex-direction: column; gap: 10px; }
+  .envpanel {
+    border: 1px solid var(--line-a2);
+    background: var(--bg-panel-2);
+    padding: 10px 12px;
+    position: relative;
+  }
+  .envpanel .envname {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-soft);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .scandot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); flex: none; }
+  .envpanel.flagged .scandot { background: var(--accent); }
+  .flags { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .flag {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem;
+    color: var(--accent); display: flex; gap: 6px;
+  }
+  .flag .mk { flex: none; }
+  .flag.ok { color: var(--good); }
+  .healthscore {
+    margin-top: 10px; display: flex; align-items: center; gap: 8px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--text-faint);
+  }
+  .healthscore .bar {
+    height: 4px; flex: 1; background: var(--line-a); position: relative; overflow: hidden;
+  }
+  .healthscore .bar > span { position: absolute; inset: 0; background: var(--accent); }
+  .envpanel:not(.flagged) .healthscore .bar > span { background: var(--good); }
+  .scanline {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+  .scanline::after {
+    content: ""; position: absolute; left: 0; top: -20%; width: 100%; height: 20%;
+    background: linear-gradient(180deg, transparent, var(--accent-soft), transparent);
+    animation: scan 4.5s linear infinite;
+  }
+  @keyframes scan { 0% { top: -20%; } 100% { top: 100%; } }
+  @media (prefers-reduced-motion: reduce) { .scanline::after { animation: none; display: none; } }
+
+  /* ---------- countdown ---------- */
+  .launchbar { margin-top: 34px; }
+  .countdown { padding: 18px 20px 20px; }
+  .countdown-top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .countdown-unit {
+    text-align: center; padding: 0 6px; border-right: 1px dashed var(--line-a);
+  }
+  .countdown-unit:last-child { border-right: 0; }
+  .countdown-unit .num {
+    font-family: "IBM Plex Mono", monospace; font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.4rem); font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .countdown-unit .unitlabel {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint);
+    margin-top: 2px;
+  }
+  .local-time { margin-top: 12px; font-size: 0.78rem; color: var(--text-faint); font-family: "IBM Plex Mono", monospace; }
+  .local-time strong { color: var(--text-soft); font-weight: 500; }
+
+  .cta-row { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .preorder-form { display: flex; flex-wrap: wrap; gap: 0; }
+  .email-input {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.86rem;
+    background: var(--bg); color: var(--text);
+    border: 1.5px solid var(--line); border-right: 0;
+    padding: 0 14px; min-width: 220px; height: 46px;
+  }
+  .email-input::placeholder { color: var(--text-faint); }
+  .email-input:focus-visible { outline-offset: -2px; }
+  .preorder-form .btn { height: 46px; white-space: nowrap; }
+  .preorder-form.is-submitting .btn { opacity: 0.7; cursor: progress; }
+  @media (max-width: 480px) {
+    .email-input { border-right: 1.5px solid var(--line); border-bottom: 0; width: 100%; }
+    .preorder-form .btn { width: 100%; justify-content: center; }
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.86rem; font-weight: 600;
+    text-decoration: none; padding: 13px 22px; border: 1.5px solid var(--line);
+    letter-spacing: 0.01em; transition: transform .12s ease, background .12s ease;
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #FBF7F1; }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.ghost { background: transparent; color: var(--text); }
+  .btn.ghost:hover { background: var(--bg-panel); }
+  .cta-note { font-size: 0.78rem; color: var(--text-faint); max-width: 32ch; }
+
+  /* ---------- sections shared ---------- */
+  section.block { padding: 64px 0; }
+  .section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 34px; }
+  .section-head .idx { color: var(--accent); }
+  h2.section-title { font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 700; letter-spacing: -0.01em; }
+
+  /* problems */
+  .problem-list { display: flex; flex-direction: column; }
+  .problem {
+    display: grid; grid-template-columns: 34px 1fr; gap: 18px;
+    padding: 22px 0; border-top: 1px solid var(--line-a);
+  }
+  .problem:last-child { border-bottom: 1px solid var(--line-a); }
+  .problem .mark { font-family: "IBM Plex Mono", monospace; color: var(--accent); font-size: 1.1rem; }
+  .problem p { color: var(--text-soft); max-width: 58ch; }
+  .problem .src {
+    display: block; margin-top: 6px; font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem; color: var(--text-faint);
+  }
+
+  /* how it works */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-a); border: 1px solid var(--line-a); }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+  .step { background: var(--bg-panel); padding: 26px 24px; }
+  .step .stepnum { font-family: "IBM Plex Mono", monospace; color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+  .step h3 { font-size: 1.05rem; margin-top: 10px; margin-bottom: 10px; }
+  .step p { color: var(--text-soft); font-size: 0.92rem; }
+
+  /* ticket / preorder */
+  .ticket-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 860px) { .ticket-wrap { grid-template-columns: 1fr; } }
+  .ticket { padding: 26px; }
+  .ticket-row { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px dashed var(--line-a); font-size: 0.9rem; }
+  .ticket-row:first-of-type { border-top: 0; }
+  .ticket-row .k { color: var(--text-soft); }
+  .ticket-row .v { font-family: "IBM Plex Mono", monospace; font-weight: 600; text-align: right; }
+  .ticket-price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 18px; }
+  .ticket-price .amt { font-family: "IBM Plex Mono", monospace; font-size: 2.4rem; font-weight: 700; }
+  .ticket-price .per { color: var(--text-faint); font-size: 0.85rem; }
+
+  .preorder-copy p { color: var(--text-soft); margin-bottom: 16px; max-width: 52ch; }
+  .preorder-copy h2 { margin-bottom: 16px; }
+
+  /* faq */
+  details.faq-item { border-top: 1px solid var(--line-a); padding: 18px 0; }
+  details.faq-item:last-child { border-bottom: 1px solid var(--line-a); }
+  details.faq-item summary {
+    cursor: pointer; list-style: none; display: flex; justify-content: space-between;
+    align-items: center; gap: 16px; font-weight: 600; font-size: 0.98rem;
+  }
+  details.faq-item summary::-webkit-details-marker { display: none; }
+  details.faq-item summary .plusmin { font-family: "IBM Plex Mono", monospace; color: var(--accent); flex: none; font-size: 1.1rem; }
+  details.faq-item[open] summary .plusmin::before { content: "\2212"; }
+  details.faq-item:not([open]) summary .plusmin::before { content: "+"; }
+  details.faq-item .faq-a { margin-top: 12px; color: var(--text-soft); max-width: 62ch; font-size: 0.94rem; }
+
+  /* footer */
+  footer.titleblock-footer { border-top: 1px solid var(--line-a); padding: 26px 0 40px; }
+  .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; color: var(--text-faint); }
+  .footer-row a { text-decoration: underline; text-underline-offset: 3px; color: var(--text-soft); }
+</style>
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap titleblock-inner">
+    <div class="wordmark">
+      <svg class="logo-icon" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+        <rect class="ink" x="18" y="14" width="6" height="36"/>
+        <rect class="ink" x="18" y="14" width="28" height="6"/>
+        <rect class="flag" x="18" y="29" width="18" height="6"/>
+        <rect class="ink" x="18" y="44" width="28" height="6"/>
+      </svg>
+      ENVEXA<span class="dot">·</span>
+    </div>
+    <nav class="primary">
+      <a href="#inspection">How it works</a>
+      <a href="#access">Free Access</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="stamp">Pre&#8209;launch</div>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow-row">
+          <span class="label"><span class="bracket">[</span>DOC ENVX&#8209;001<span class="bracket">]</span> CONFIGURATION AUDIT &middot; PRE&#8209;LAUNCH BUILD</span>
+        </div>
+        <h1 class="headline">Your SaaS works. <span class="accentline">Until one environment variable doesn't.</span></h1>
+        <p class="lede">Envexa scans your codebase, compares configuration across local, staging, and production, and flags exactly what's missing, exposed, or drifted &mdash; before it ships, not after.</p>
+
+        <div class="diffbox frame">
+          <span class="tick tick-tl"></span><span class="tick tick-br"></span>
+          <div class="diffline rm"><span class="gutter">&minus;</span><span class="content">STRIPE_WEBHOOK_SECRET &mdash; missing in Staging</span></div>
+          <div class="diffline rm"><span class="gutter">&minus;</span><span class="content">REDIS_URL &mdash; missing in Staging</span></div>
+          <div class="diffline ok"><span class="gutter">&#10003;</span><span class="content">8/8 variables documented in Local</span></div>
+          <div class="diffmeta">last scan &middot; 12s ago &middot; no secret values stored</div>
+        </div>
+
+        <div class="cta-row">
+          <form class="preorder-form" aria-label="Get free early access">
+            <label class="visually-hidden" for="email-1">Email address</label>
+            <input class="email-input" type="email" id="email-1" name="email" placeholder="you@company.com" required />
+            <button class="btn primary" type="submit">Get Free Access &rarr;</button>
+          </form>
+          <span class="cta-note">100% Free access for early adopters. No credit card required.</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inspection frame" id="inspection">
+          <span class="tick tick-tl"></span><span class="tick tick-tr"></span><span class="tick tick-bl"></span><span class="tick tick-br"></span>
+          <div class="inspection-title">
+            <span class="name mono">INSPECTION &mdash; ACME SAAS</span>
+            <span class="label">LIVE</span>
+          </div>
+          <div class="envstack">
+            <div class="envpanel">
+              <div class="scanline"></div>
+              <div class="envname"><span>Local</span><span class="scandot"></span></div>
+              <div class="flags"><div class="flag ok"><span class="mk">&#10003;</span> Clean &mdash; 8/8 documented</div></div>
+              <div class="healthscore"><span>100</span><div class="bar"><span style="width:100%"></span></div></div>
+            </div>
+            <div class="envpanel flagged">
+              <div class="scanline"></div>
+              <div class="envname"><span>Staging</span><span class="scandot"></span></div>
+              <div class="flags">
+                <div class="flag"><span class="mk">&#9888;</span> Missing REDIS_URL</div>
+                <div class="flag"><span class="mk">&#9888;</span> Missing STRIPE_WEBHOOK_SECRET</div>
+              </div>
+              <div class="healthscore"><span>61</span><div class="bar"><span style="width:61%"></span></div></div>
+            </div>
+            <div class="envpanel flagged">
+              <div class="scanline"></div>
+              <div class="envname"><span>Production</span><span class="scandot"></span></div>
+              <div class="flags"><div class="flag"><span class="mk">&#9888;</span> Exposed sk_live_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;9X2A</div></div>
+              <div class="healthscore"><span>72</span><div class="bar"><span style="width:72%"></span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="launchbar">
+          <div class="countdown frame">
+            <span class="tick tick-tl"></span><span class="tick tick-br"></span>
+            <div class="countdown-top">
+              <span class="label">Launching on Diwali</span>
+              <span class="label" id="launch-status">Nov 8</span>
+            </div>
+            <div class="countdown-grid" role="timer" aria-live="polite">
+              <div class="countdown-unit"><div class="num" id="cd-days">00</div><div class="unitlabel">Days</div></div>
+              <div class="countdown-unit"><div class="num" id="cd-hours">00</div><div class="unitlabel">Hrs</div></div>
+              <div class="countdown-unit"><div class="num" id="cd-mins">00</div><div class="unitlabel">Min</div></div>
+              <div class="countdown-unit"><div class="num" id="cd-secs">00</div><div class="unitlabel">Sec</div></div>
+            </div>
+            <div class="local-time" id="local-time"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block wrap">
+    <div class="section-head"><span class="label idx">[01]</span><h2 class="section-title">What GitHub's secret scanning doesn't see</h2></div>
+    <div class="problem-list">
+      <div class="problem">
+        <span class="mark">&minus;</span>
+        <div>
+          <p>Staging is missing <code class="mono">REDIS_URL</code> and <code class="mono">STRIPE_WEBHOOK_SECRET</code> &mdash; and nobody finds out until the deploy fails.</p>
+          <span class="src">GitHub only sees what's committed to git, not what's actually set on your deploy platform.</span>
+        </div>
+      </div>
+      <div class="problem">
+        <span class="mark">&minus;</span>
+        <div>
+          <p>A Stripe key leaks into a file that later gets removed. The commit is gone &mdash; is the key still live in production?</p>
+          <span class="src">Secret exposure detection masks every finding: <code class="mono">sk_live_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;9X2A</code> &mdash; never the real value.</span>
+        </div>
+      </div>
+      <div class="problem">
+        <span class="mark">&minus;</span>
+        <div>
+          <p>A variable was removed from the code six months ago. It's still sitting in <code class="mono">.env.example</code>, and nobody remembers why.</p>
+          <span class="src">.env.example intelligence flags both directions: undocumented in code, and documented but unused.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block wrap">
+    <div class="section-head"><span class="label idx">[02]</span><h2 class="section-title">How the inspection runs</h2></div>
+    <div class="steps">
+      <div class="step">
+        <div class="stepnum">01 &mdash; SCAN</div>
+        <h3>Read the code, not the secrets</h3>
+        <p>Envexa detects every <code class="mono">process.env</code>, <code class="mono">os.getenv</code>, and <code class="mono">import.meta.env</code> reference in your repository and classifies it &mdash; database, auth, billing, storage. It never reads the actual values.</p>
+      </div>
+      <div class="step">
+        <div class="stepnum">02 &mdash; COMPARE</div>
+        <h3>Local vs. staging vs. production</h3>
+        <p>Every variable is checked against each environment you've mapped. What's missing, undocumented, or unused shows up immediately, with a transparent 0&ndash;100 health score behind it.</p>
+      </div>
+      <div class="step">
+        <div class="stepnum">03 &mdash; CATCH IT BEFORE IT SHIPS</div>
+        <h3>CI checks and PR comments</h3>
+        <p><code class="mono">envexa check</code> exits non-zero on critical issues for your pipeline. A GitHub PR check comments the moment a change introduces an undocumented variable.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block wrap" id="access">
+    <div class="section-head"><span class="label idx">[03]</span><h2 class="section-title">Get Free Early Access</h2></div>
+    <div class="ticket-wrap">
+      <div class="preorder-copy">
+        <p>Envexa launches on Diwali, November 8, 2026. Reserve your free spot today to get full, unrestricted access to all features on launch day.</p>
+        <p>Early access users receive full platform access completely free &mdash; no credit card or payment required.</p>
+        <div class="cta-row">
+          <form class="preorder-form" aria-label="Get free early access">
+            <label class="visually-hidden" for="email-2">Email address</label>
+            <input class="email-input" type="email" id="email-2" name="email" placeholder="you@company.com" required />
+            <button class="btn primary" type="submit">Get Free Access &rarr;</button>
+          </form>
+          <a class="btn ghost" href="#faq">Read the FAQ</a>
+        </div>
+      </div>
+      <div class="ticket frame">
+        <span class="tick tick-tl"></span><span class="tick tick-tr"></span><span class="tick tick-bl"></span><span class="tick tick-br"></span>
+        <div class="label" style="margin-bottom:14px;">Early Access Pass &middot; No. 001</div>
+        <div class="ticket-price"><span class="amt">$0</span><span class="per">Free Access</span></div>
+
+        <div class="label" style="margin:0 0 10px;">Free Early Access Includes</div>
+        <div class="flags" style="margin-bottom:18px; gap:8px;">
+          <div class="flag ok"><span class="mk">&#10003;</span> Full Pro access at launch &mdash; unlimited repositories, health score, secret detection, PR checks</div>
+          <div class="flag ok"><span class="mk">&#10003;</span> 100% Free access for early adopters</div>
+          <div class="flag ok"><span class="mk">&#10003;</span> Early Access badge on your account</div>
+          <div class="flag ok"><span class="mk">&#10003;</span> Priority onboarding queue on Nov 8 (Diwali)</div>
+          <div class="flag ok"><span class="mk">&#10003;</span> Direct input on the roadmap before general release</div>
+        </div>
+
+        <div class="ticket-row"><span class="k">Reserves</span><span class="v">Free Early Access Seat</span></div>
+        <div class="ticket-row"><span class="k">Delivery</span><span class="v">Nov 8, 12:01 AM (Diwali)</span></div>
+        <div class="ticket-row"><span class="k">Cost</span><span class="v">100% Free ($0)</span></div>
+        <div class="ticket-row"><span class="k">Access</span><span class="v">Instant on Launch</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block wrap" id="faq">
+    <div class="section-head"><span class="label idx">[04]</span><h2 class="section-title">Frequently asked questions</h2></div>
+    <div>
+      <details class="faq-item" open>
+        <summary>Is Envexa completely free?<span class="plusmin"></span></summary>
+        <p class="faq-a">Yes! Early access users get full access to all Envexa features completely free. No credit card or payment is required.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is Envexa a secrets manager?<span class="plusmin"></span></summary>
+        <p class="faq-a">No. Envexa never stores actual secret values. It's a configuration intelligence layer: it detects which variables your code needs, compares them across environments, and flags what's missing, undocumented, or exposed. Keep using Vault, Doppler, 1Password, or your platform's native secrets manager alongside it.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Doesn't GitHub already do this for free?<span class="plusmin"></span></summary>
+        <p class="faq-a">GitHub's secret scanning catches credentials committed to git, and it's genuinely good at that &mdash; keep it on. It has no visibility into whether a variable is actually set in your Staging environment, or whether <code class="mono">.env.example</code> is out of date. That's a deploy-platform problem, not a git problem, and it's what Envexa exists for.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do I have to upload my production secrets?<span class="plusmin"></span></summary>
+        <p class="faq-a">Never. Production configuration is represented as metadata &mdash; which variables exist and whether they're set &mdash; not the values themselves. Local and staging work the same way.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What happens on Diwali (November 8)?<span class="plusmin"></span></summary>
+        <p class="faq-a">You'll receive an email with your access link and setup instructions so you can start scanning your repositories right away.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="titleblock-footer">
+  <div class="wrap footer-row">
+    <span>ENVEXA &middot; DOC ENVX&#8209;001 &middot; REV 1.0</span>
+    <span>&copy; 2026 Envexa &middot; <a href="mailto:hello@envexa.dev">hello@envexa.dev</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var target = new Date(2026, 10, 8, 0, 1, 0); // Nov 8, 2026 (Diwali), 12:01 AM — visitor's local time
+
+  var els = {
+    days: document.getElementById('cd-days'),
+    hours: document.getElementById('cd-hours'),
+    mins: document.getElementById('cd-mins'),
+    secs: document.getElementById('cd-secs'),
+    status: document.getElementById('launch-status'),
+    local: document.getElementById('local-time')
+  };
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function render() {
+    var now = new Date();
+    var diff = target.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      els.days.textContent = els.hours.textContent = els.mins.textContent = els.secs.textContent = '00';
+      els.status.textContent = 'Live now';
+      return;
+    }
+
+    var days = Math.floor(diff / 86400000);
+    diff -= days * 86400000;
+    var hours = Math.floor(diff / 3600000);
+    diff -= hours * 3600000;
+    var mins = Math.floor(diff / 60000);
+    diff -= mins * 60000;
+    var secs = Math.floor(diff / 1000);
+
+    els.days.textContent = pad(days);
+    els.hours.textContent = pad(hours);
+    els.mins.textContent = pad(mins);
+    els.secs.textContent = pad(secs);
+  }
+
+  try {
+    var fmt = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    els.local.innerHTML = 'That\'s <strong>' + fmt.format(target) + '</strong> in your local time (' + tz + ').';
+  } catch (e) {
+    els.local.textContent = '';
+  }
+
+  render();
+  setInterval(render, 1000);
+
+  // Email capture — inserts straight into Supabase (preorder_leads table,
+  // see supabase-preorder-leads.sql).
+  var SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+  var SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+
+  var sb = null;
+  if (window.supabase && SUPABASE_URL.indexOf('YOUR-PROJECT-REF') === -1) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
+  document.querySelectorAll('.preorder-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = form.querySelector('input[type="email"]');
+      var email = input.value.trim();
+      if (!email) { input.focus(); return; }
+
+      var btn = form.querySelector('button');
+      form.classList.add('is-submitting');
+      if (btn) {
+        btn.textContent = 'Reserving…';
+        btn.disabled = true;
+      }
+
+      var save = sb
+        ? sb.from('preorder_leads').insert({ email: email, source: 'envexa-free-access' })
+        : Promise.resolve();
+
+      function showSuccess() {
+        form.innerHTML = '<div style="font-family: \'IBM Plex Mono\', monospace; font-size: 0.88rem; color: var(--good); font-weight: 600; padding: 12px 16px; border: 1px solid var(--good); background: var(--good-soft); width: 100%; text-align: center;">&#10003; Spot reserved! We\'ll grant you free access on Diwali (Nov 8).</div>';
+      }
+
+      Promise.resolve(save).then(showSuccess).catch(showSuccess);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
